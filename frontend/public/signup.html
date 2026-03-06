@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gira — Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Satoshi:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yellow: #ffce32;
+      --blue: #1d63ff;
+      --blue-dark: #0a1a4e;
+      --blue-mid: #1550d4;
+      --light-bg: #f0f4ff;
+      --text-muted: #6b7a99;
+      --white: #ffffff;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Satoshi", system-ui, -apple-system, sans-serif;
+      background: var(--light-bg);
+      color: var(--blue-dark);
+      overflow: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    .scrollbar { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--yellow); z-index: 1200; transition: width 0.1s ease; }
+    .noise { position: fixed; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E"); opacity: 0.028; z-index: 1100; }
+    .blobs { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.14; animation: blob 14s ease-in-out infinite alternate; }
+    .b1 { width: 600px; height: 600px; background: var(--blue); top: -120px; left: -160px; animation-duration: 15s; }
+    .b2 { width: 450px; height: 450px; background: var(--yellow); bottom: -120px; right: -120px; animation-duration: 12s; }
+    .b3 { width: 350px; height: 350px; background: var(--blue-mid); top: 35%; right: -80px; animation-duration: 16s; }
+    .b4 { width: 280px; height: 280px; background: var(--yellow); top: 40%; left: 35%; opacity: 0.08; animation-duration: 10s; }
+    @keyframes blob { 0% { transform: translate(0,0);} 100% { transform: translate(35px,-35px);} }
+    .cursor { position: fixed; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); opacity: 0.9; pointer-events: none; transform: translate(-50%, -50%); z-index: 1300; transition: transform 0.1s ease; }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 72px; display: flex; align-items: center; padding: 0 32px;
+      backdrop-filter: blur(20px); background: rgba(240,244,255,0.85); border-bottom: 1px solid rgba(29,99,255,0.08);
+      z-index: 1000; transform: translateY(-100%); animation: navDrop 0.6s ease forwards 0.1s;
+    }
+    @keyframes navDrop { to { transform: translateY(0); } }
+    .nav-left { display: flex; align-items: center; gap: 8px; font-family: "Syne", sans-serif; font-weight: 800; font-size: 24px; color: var(--blue-dark); }
+    .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+    .nav-center { display: flex; gap: 18px; margin: 0 auto; }
+    .nav-link { position: relative; padding: 6px 0; font-weight: 500; font-size: 15px; color: var(--blue-dark); }
+    .nav-link::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 2px; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+    .nav-link:hover { color: #06233b; }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-right { display: flex; gap: 10px; }
+    .btn { border: 1px solid transparent; border-radius: 12px; padding: 10px 16px; font-family: "Syne", sans-serif; font-weight: 700; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease, border 0.2s ease; position: relative; overflow: hidden; }
+    .btn-ghost { background: transparent; border-color: var(--blue); color: var(--blue-dark); }
+    .btn-yellow { background: var(--yellow); color: var(--blue-dark); box-shadow: 0 10px 30px rgba(255,206,50,0.35); }
+    .btn-yellow:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,206,50,0.5); }
+    .btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(29,99,255,0.18); }
+    .ripple-circle { position: absolute; border-radius: 999px; transform: scale(0); background: rgba(255,255,255,0.6); animation: ripple 0.6s ease; pointer-events: none; }
+    @keyframes ripple { to { transform: scale(10); opacity: 0; } }
+    main { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; height: 100vh; }
+    .panel-left { position: relative; display: grid; place-items: center; background: rgba(255,255,255,0.75); backdrop-filter: blur(24px); border-right: 1px solid rgba(29,99,255,0.08); }
+    .panel-right { position: relative; color: #fff; overflow: hidden; background: linear-gradient(145deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-mid) 100%); }
+    .form-wrap { width: min(420px, 82vw); display: grid; gap: 14px; }
+    .logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 26px; display: flex; align-items: center; gap: 8px; color: var(--blue-dark); }
+    .title { margin: 0; font-family: "Syne"; font-weight: 800; font-size: 42px; letter-spacing: -0.03em; color: var(--blue-dark); }
+    .subtitle { margin: 4px 0 18px; font-size: 15px; color: var(--text-muted); }
+    .field { position: relative; }
+    .field input {
+      width: 100%; padding: 14px 16px 14px 44px; border: 1.5px solid #e2e8f4; border-radius: 12px; background: rgba(248,250,255,0.9);
+      font-size: 14px; font-family: "Satoshi"; color: var(--blue-dark); transition: all 0.2s ease;
+    }
+    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(29,99,255,0.08); background: #fff; outline: none; }
+    .field svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text-muted); transition: color 0.2s ease; }
+    .field input:focus + svg { color: var(--blue); }
+    label { display: block; margin-bottom: 6px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; color: var(--text-muted); }
+    .checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); margin: 6px 0 2px; }
+    .primary-btn {
+      width: 100%; padding: 15px; border: none; border-radius: 12px;
+      background: var(--yellow); color: var(--blue-dark); font-family: "Syne"; font-weight: 700; font-size: 15px;
+      box-shadow: 0 10px 28px rgba(255,206,50,0.4); cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease;
+      position: relative; overflow: hidden;
+    }
+    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,206,50,0.5); }
+    .divider { display: flex; align-items: center; gap: 10px; color: #d0d6e5; font-size: 13px; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e2e8f4; }
+    .google-btn {
+      width: 100%; padding: 13px; border-radius: 12px; border: 1.5px solid #e2e8f4;
+      background: #fff; display: flex; align-items: center; justify-content: center; gap: 10px;
+      font-weight: 600; color: var(--blue-dark); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .google-btn:hover { border-color: #b2b5e0; background: #f8faff; }
+    .footer-link { text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+    .footer-link a { color: var(--blue); font-weight: 600; }
+    .animate { opacity: 0; transform: translateX(-16px); animation: fadeIn 0.55s ease forwards; }
+    .animate:nth-child(1) { animation-delay: 0.05s; }
+    .animate:nth-child(2) { animation-delay: 0.13s; }
+    .animate:nth-child(3) { animation-delay: 0.21s; }
+    .animate:nth-child(4) { animation-delay: 0.29s; }
+    .animate:nth-child(5) { animation-delay: 0.37s; }
+    .animate:nth-child(6) { animation-delay: 0.45s; }
+    .animate:nth-child(7) { animation-delay: 0.53s; }
+    @keyframes fadeIn { to { opacity: 1; transform: translateX(0); } }
+    /* Right panel */
+    .right-inner { position: relative; height: 100%; padding: 90px 70px 60px; display: grid; grid-template-rows: auto 1fr auto; gap: 26px; }
+    .glow-yellow { position: absolute; width: 350px; height: 350px; background: rgba(255,206,50,0.22); filter: blur(70px); top: -60px; right: -60px; }
+    .glow-white { position: absolute; width: 250px; height: 250px; background: rgba(255,255,255,0.07); filter: blur(60px); bottom: -70px; left: -40px; }
+    .particles { position: absolute; inset: 0; pointer-events: none; }
+    .particles span { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: 0.18; animation: floatUp linear infinite; }
+    @keyframes floatUp { 0% { transform: translateY(0); opacity: 0;} 20% { opacity: 0.25;} 100% { transform: translateY(-180px); opacity: 0;} }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255,206,50,0.3); background: rgba(255,206,50,0.15); color: var(--yellow); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .right-title { margin: 8px 0 6px; font-family: "Syne"; font-weight: 800; font-size: 34px; letter-spacing: -0.03em; }
+    .right-title .underline { position: relative; display: inline-block; }
+    .right-title .underline::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 8px; background: var(--yellow); transform: scaleX(0); transform-origin: left; animation: underlineGrow 0.55s ease forwards 0.25s; }
+    @keyframes underlineGrow { to { transform: scaleX(1); } }
+    .right-sub { max-width: 280px; color: rgba(255,255,255,0.55); font-size: 14px; margin: 0; }
+    .cards { display: grid; gap: 14px; }
+    .card {
+      position: relative; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(16px); border-radius: 18px; padding: 18px 20px;
+      transition: transform 0.3s ease; transform-style: preserve-3d;
+      opacity: 0; transform: translateX(24px); animation: slideIn 0.6s ease forwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.12s; }
+    .card:nth-child(2) { animation-delay: 0.24s; }
+    .card:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+    .card:hover { transform: translateY(-2px); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; }
+    .chip-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; font-size: 16px; }
+    .chip-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+    .chip-value { font-family: "Syne"; font-weight: 700; font-size: 17px; margin-top: 2px; }
+    .badge-pill { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .badge-green { background: rgba(52,211,153,0.2); color: #34d399; }
+    .badge-blue { background: rgba(147,197,253,0.2); color: #e5edff; }
+    .badge-yellow { background: rgba(255,206,50,0.2); color: var(--yellow); }
+    .progress { margin-top: 12px; width: 100%; height: 4px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+    .progress span { display: block; height: 100%; width: 0; background: var(--yellow); border-radius: 4px; animation: growBar 1s ease forwards 0.3s; }
+    @keyframes growBar { to { width: 85%; } }
+    .typing { display: flex; gap: 6px; margin-top: 10px; }
+    .typing span { width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: 0.8; animation: bounce 1s infinite; }
+    .typing span:nth-child(2) { animation-delay: 0.2s; }
+    .typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 80%, 100% { transform: translateY(0);} 40% { transform: translateY(-6px);} }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .stat { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 14px; text-align: center; }
+    .stat-number { font-family: "Syne"; font-weight: 800; font-size: 22px; color: var(--yellow); }
+    .stat-label { margin: 4px 0 0; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+    /* Responsive */
+    @media (max-width: 900px) { nav { padding: 0 20px; } .nav-center { display: none; } }
+    @media (max-width: 768px) {
+      body { overflow: auto; }
+      main { grid-template-columns: 1fr; height: auto; }
+      .panel-right { display: none; }
+      .panel-left { min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scrollbar"></div>
+  <div class="blobs">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"></div>
+
+  <nav>
+    <div class="nav-left">gira <span class="logo-dot"></span></div>
+    <div class="nav-center">
+      <a class="nav-link" href="#">Home</a>
+      <a class="nav-link" href="#">Features</a>
+      <a class="nav-link" href="#">Pricing</a>
+      <a class="nav-link" href="#">Docs</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-ghost btn-ripple" data-ripple>Log In</button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="panel-left">
+      <div class="form-wrap">
+        <div class="logo animate">gira <span class="logo-dot"></span></div>
+        <div class="animate">
+          <h1 class="title">Create Account.</h1>
+          <p class="subtitle">It's free and fast.</p>
+        </div>
+
+        <div class="animate">
+          <label for="name">Full Name</label>
+          <div class="field">
+            <input id="name" type="text" placeholder="Avery Chen" autocomplete="name" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="animate">
+          <label for="email">Email</label>
+          <div class="field">
+            <input id="email" type="email" placeholder="you@gira.com" autocomplete="email" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/>
+              <path d="m4 7 8 6 8-6"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="animate">
+          <label for="password">Password</label>
+          <div class="field">
+            <input id="password" type="password" placeholder="At least 8 characters" autocomplete="new-password" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="9" width="18" height="12" rx="2" />
+              <path d="M7 9V6a5 5 0 0 1 10 0v3" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="animate">
+          <label for="confirm">Confirm Password</label>
+          <div class="field">
+            <input id="confirm" type="password" placeholder="Re-enter password" autocomplete="new-password" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="9" width="18" height="12" rx="2" />
+              <path d="M7 9V6a5 5 0 0 1 10 0v3" />
+            </svg>
+          </div>
+          <label class="checkbox"><input type="checkbox" id="showPass" /> Show password</label>
+        </div>
+
+        <button class="primary-btn animate btn-ripple" data-ripple>Sign Up →</button>
+        <div class="divider animate">or</div>
+        <button class="google-btn animate" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 10.2v3.6h5.09A5.1 5.1 0 0 1 12 19.2 7.2 7.2 0 1 1 18.91 9l-2.55 2.1A4.32 4.32 0 1 0 12 18.3a5.1 5.1 0 0 0 4.77-3.3H12z"/>
+          </svg>
+          Continue with Google
+        </button>
+        <div class="footer-link animate">Already have an account? <a href="#">Log In</a></div>
+      </div>
+    </section>
+
+    <section class="panel-right">
+      <div class="right-inner">
+        <div class="glow-yellow"></div>
+        <div class="glow-white"></div>
+        <div class="particles" aria-hidden="true"></div>
+
+        <div>
+          <div class="badge">✦ Trusted by 10,000+ teams</div>
+          <h2 class="right-title">Support made <span class="underline">smarter.</span> Reimagined.</h2>
+          <p class="right-sub">Create your workspace, invite teammates, and automate the busywork in minutes.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card glass tilt">
+            <div class="card-header">
+              <div class="chip">
+                <div class="chip-icon" style="background: rgba(255,206,50,0.12); color: var(--yellow);">🎫</div>
+                <div>
+                  <div class="chip-label">Latest Ticket</div>
+                  <div class="chip-value">Login issue resolved</div>
+                </div>
+              </div>
+              <span class="badge-pill badge-green">Closed</span>
+            </div>
+            <div class="progress"><span></span></div>
+          </article>
+
+          <article class="card glass tilt">
+            <div class="card-header">
+              <div class="chip">
+                <div class="chip-icon" style="background: rgba(52,211,153,0.18); color: #34d399;">💬</div>
+                <div>
+                  <div class="chip-label">Live Chat</div>
+                  <div class="chip-value">Agent is typing</div>
+                </div>
+              </div>
+              <span class="badge-pill badge-blue">Live</span>
+            </div>
+            <div class="typing"><span></span><span></span><span></span></div>
+          </article>
+
+          <article class="card glass tilt">
+            <div class="card-header">
+              <div class="chip">
+                <div class="chip-icon" style="background: rgba(29,99,255,0.18); color: #e5edff;">⚡</div>
+                <div>
+                  <div class="chip-label">Avg Response</div>
+                  <div class="chip-value">Under 2 minutes</div>
+                </div>
+              </div>
+              <span class="badge-pill badge-yellow">Fast</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="stats">
+          <div class="stat tilt"><div class="stat-number" data-count="240">0</div><div class="stat-label">Tickets/day</div></div>
+          <div class="stat tilt"><div class="stat-number" data-count="98" data-suffix="%">0%</div><div class="stat-label">Satisfaction</div></div>
+          <div class="stat tilt"><div class="stat-number" data-count="2" data-suffix="m">0m</div><div class="stat-label">Response</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const cursor = document.querySelector(".cursor");
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    const lerp = (a, b, n) => (1 - n) * a + n * b;
+    window.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
+    (function loop() {
+      cx = lerp(cx, tx, 0.25); cy = lerp(cy, ty, 0.25);
+      cursor.style.transform = `translate(${cx}px, ${cy}px)`;
+      requestAnimationFrame(loop);
+    })();
+
+    const bar = document.querySelector(".scrollbar");
+    window.addEventListener("scroll", () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      bar.style.width = `${scrolled}%`;
+    });
+
+    document.querySelectorAll("[data-ripple]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const circle = document.createElement("span");
+        circle.className = "ripple-circle";
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        circle.style.width = circle.style.height = `${size}px`;
+        circle.style.left = `${e.clientX - rect.left - size / 2}px`;
+        circle.style.top = `${e.clientY - rect.top - size / 2}px`;
+        btn.appendChild(circle);
+        setTimeout(() => circle.remove(), 650);
+      });
+    });
+
+    const particleBox = document.querySelector(".particles");
+    for (let i = 0; i < 15; i++) {
+      const dot = document.createElement("span");
+      dot.style.left = `${Math.random() * 100}%`;
+      dot.style.bottom = `${Math.random() * 120}px`;
+      dot.style.animationDuration = `${12 + Math.random() * 8}s`;
+      dot.style.animationDelay = `${-Math.random() * 5}s`;
+      particleBox.appendChild(dot);
+    }
+
+    document.querySelectorAll(".tilt").forEach((card) => {
+      const max = 7;
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const rx = -((y - rect.height / 2) / (rect.height / 2)) * max;
+        const ry = ((x - rect.width / 2) / (rect.width / 2)) * max;
+        card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      card.addEventListener("mouseleave", () => { card.style.transform = ""; });
+    });
+
+    document.querySelectorAll("[data-count]").forEach((el) => {
+      const target = parseInt(el.dataset.count, 10) || 0;
+      const suffix = el.dataset.suffix || "";
+      let start;
+      const duration = 1200;
+      const step = (ts) => {
+        if (!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        const val = Math.floor(p * target);
+        el.textContent = target >= 1000 ? val.toLocaleString() + suffix : val + suffix;
+        if (p < 1) requestAnimationFrame(step);
+        else el.textContent = target >= 1000 ? target.toLocaleString() + suffix : target + suffix;
+      };
+      requestAnimationFrame(step);
+    });
+
+    setTimeout(() => { document.querySelectorAll(".progress span").forEach((bar) => bar.style.width = "85%"); }, 300);
+
+    const showPass = document.getElementById("showPass");
+    const passInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirm");
+    showPass.addEventListener("change", () => {
+      const type = showPass.checked ? "text" : "password";
+      passInput.type = confirmInput.type = type;
+    });
+  </script>
+</body>
+</html>

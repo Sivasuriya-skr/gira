@@ -1,0 +1,765 @@
+/* ============================================================
+   WELCOME PAGE — Lightweight & Fast
+   Full-width sections | No backdrop-filter | Pure CSS
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.cdnfonts.com/css/butterpop");
+
+/* ── Root ── */
+.wp-root {
+  width: 100%;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: #0A1A4E;
+  overflow-x: hidden;
+  background: #F0F4FF;
+}
+
+/* Shared inner container — constrains content, centered */
+.wp-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+/* ============================================================
+   NAVBAR — full width white bar
+   ============================================================ */
+.wp-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: #1D63FF;
+  border-bottom: 1px solid #1550D4;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  padding: 0 2.5rem;
+}
+
+.wp-nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wp-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.wp-logo-mark {
+  display: none;
+}
+
+.wp-logo-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 2rem;
+  color: #FFCE32;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.wp-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 1.5rem;
+}
+
+.wp-navlink {
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #F0F4FF;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.wp-navlink:hover {
+  background: #1550D4;
+  color: #FFCE32;
+}
+
+.wp-nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.wp-btn-dark {
+  background: #FFCE32;
+  color: #0A1A4E;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.15s;
+}
+
+.wp-btn-dark:hover {
+  background: #E6B800;
+}
+
+/* ============================================================
+   HERO — full width section, white bg
+   ============================================================ */
+.wp-hero-section {
+  width: 100%;
+  background: #F0F4FF;
+  padding: 5rem 2.5rem 4.5rem;
+}
+
+.wp-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wp-hero-badge {
+  display: inline-block;
+  background: rgba(255, 206, 50, 0.2);
+  border: 1px solid #FFCE32;
+  color: #0A1A4E;
+  border-radius: 50px;
+  padding: 0.35rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.wp-hero-h1 {
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #0A1A4E;
+  margin-bottom: 1.35rem;
+}
+
+.wp-blue {
+  color: #1D63FF;
+}
+
+.wp-hero-sub {
+  font-size: 1rem;
+  color: #0A1A4E;
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 2rem;
+}
+
+.wp-hero-sub strong {
+  color: #0A1A4E;
+  font-weight: 700;
+}
+
+.wp-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.wp-btn-primary {
+  background: #FFCE32;
+  color: #0A1A4E;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.15s;
+  box-shadow: 0 6px 18px rgba(255, 206, 50, 0.3);
+}
+
+.wp-btn-primary:hover {
+  background: #E6B800;
+}
+
+.wp-btn-outline {
+  background: #F0F4FF;
+  color: #0A1A4E;
+  border: 1.5px solid #F0F4FF;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.wp-btn-outline:hover {
+  border-color: #1D63FF;
+  color: #1D63FF;
+}
+
+.wp-hero-trust {
+  font-size: 0.85rem;
+  color: #0A1A4E;
+  margin: 0;
+}
+
+.wp-hero-trust strong {
+  color: #0A1A4E;
+}
+
+/* ── Hero Panel (Right side) ── */
+.wp-hero-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wp-panel-card {
+  background: #F0F4FF;
+  border: 1px solid #F0F4FF;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.09);
+}
+
+.wp-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.wp-panel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.wp-panel-dot.red {
+  background: #1D63FF;
+}
+
+.wp-panel-dot.yellow {
+  background: #1D63FF;
+}
+
+.wp-panel-dot.green {
+  background: #1D63FF;
+}
+
+.wp-panel-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0A1A4E;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-left: auto;
+}
+
+.wp-panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #F0F4FF;
+}
+
+.wp-panel-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.28rem 0.7rem;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.wp-panel-badge.blue {
+  background: #F0F4FF;
+  color: #1D63FF;
+}
+
+.wp-panel-badge.orange {
+  background: #F0F4FF;
+  color: #1D63FF;
+}
+
+.wp-panel-badge.purple {
+  background: #F0F4FF;
+  color: #0A1A4E;
+}
+
+.wp-panel-badge.red {
+  background: #F0F4FF;
+  color: #0A1A4E;
+}
+
+.wp-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wp-tag.green {
+  background: #F0F4FF;
+  color: #1D63FF;
+}
+
+.wp-tag.orange {
+  background: #F0F4FF;
+  color: #1D63FF;
+}
+
+.wp-tag.blue {
+  background: #F0F4FF;
+  color: #1D63FF;
+}
+
+.wp-tag.red {
+  background: #F0F4FF;
+  color: #0A1A4E;
+}
+
+.wp-panel-divider {
+  height: 1px;
+  background: #F0F4FF;
+  margin: 0.75rem 0;
+}
+
+.wp-panel-stat-row {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 0.25rem;
+}
+
+.wp-panel-stat {
+  text-align: center;
+}
+
+.wp-panel-stat-num {
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.wp-panel-stat-num.blue {
+  color: #1D63FF;
+}
+
+.wp-panel-stat-num.green {
+  color: #1D63FF;
+}
+
+.wp-panel-stat-num.orange {
+  color: #1D63FF;
+}
+
+.wp-panel-stat-lbl {
+  font-size: 0.65rem;
+  color: #0A1A4E;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   STATS — full width grey strip
+   ============================================================ */
+.wp-stats-section {
+  width: 100%;
+  background: #F0F4FF;
+  padding: 3.5rem 2.5rem;
+}
+
+.wp-stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wp-stat {
+  flex: 1;
+  min-width: 180px;
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: #F0F4FF;
+  border: 1px solid #F0F4FF;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s;
+}
+
+.wp-stat:hover {
+  transform: translateY(-3px);
+}
+
+.wp-stat-num {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1D63FF;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.wp-stat-lbl {
+  font-size: 0.75rem;
+  color: #0A1A4E;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   SHARED SECTION PARTS
+   ============================================================ */
+.wp-section-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1D63FF;
+  text-align: center;
+  margin-bottom: 0.6rem;
+}
+
+.wp-section-h2 {
+  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+  font-weight: 900;
+  color: #0A1A4E;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin-bottom: 3rem;
+}
+
+/* ============================================================
+   HOW IT WORKS — full width white section
+   ============================================================ */
+.wp-how-section {
+  width: 100%;
+  background: #F0F4FF;
+  padding: 5rem 2.5rem;
+}
+
+.wp-how {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wp-steps {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.wp-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 180px;
+  max-width: 280px;
+  padding: 2.25rem 1.5rem;
+  background: #F0F4FF;
+  border: 1px solid #F0F4FF;
+  border-radius: 16px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.wp-step:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+}
+
+.wp-step-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  flex-shrink: 0;
+}
+
+.wp-step-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0A1A4E;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.wp-step-arrow {
+  font-size: 1.5rem;
+  color: #1D63FF;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* ============================================================
+   FEATURES — full width grey section
+   ============================================================ */
+.wp-features-section {
+  width: 100%;
+  background: #F0F4FF;
+  padding: 5rem 2.5rem;
+}
+
+.wp-features {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.wp-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.wp-feature-card {
+  background: #F0F4FF;
+  border: 1px solid #F0F4FF;
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.wp-feature-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-color, #1D63FF);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+.wp-feature-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.1rem;
+}
+
+.wp-feature-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0A1A4E;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.wp-feature-desc {
+  font-size: 0.85rem;
+  color: #0A1A4E;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ============================================================
+   CTA SECTION — full width dark blue
+   ============================================================ */
+.wp-cta-section {
+  width: 100%;
+  background: linear-gradient(135deg, #1D63FF 0%, #1D63FF 55%, #1D63FF 100%);
+  padding: 6rem 2.5rem;
+  text-align: center;
+}
+
+.wp-cta-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.wp-cta-h2 {
+  font-size: clamp(1.9rem, 3.5vw, 3rem);
+  font-weight: 900;
+  color: #F0F4FF;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin-bottom: 1rem;
+}
+
+.wp-cta-sub {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2.25rem;
+  line-height: 1.5;
+}
+
+.wp-btn-white {
+  background: #F0F4FF;
+  color: #0A1A4E;
+  border: none;
+  border-radius: 10px;
+  padding: 0.95rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+.wp-btn-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================
+   FOOTER — full width white
+   ============================================================ */
+.wp-footer {
+  width: 100%;
+  border-top: 1px solid #F0F4FF;
+  padding: 2rem 2.5rem;
+  background: #F0F4FF;
+}
+
+.wp-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.wp-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 1.6rem;
+  color: #1D63FF;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.wp-footer-logo {
+  display: none;
+}
+
+.wp-footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.wp-footer-links a {
+  font-size: 0.83rem;
+  color: #0A1A4E;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.wp-footer-links a:hover {
+  color: #0A1A4E;
+}
+
+.wp-footer-copy {
+  font-size: 0.78rem;
+  color: #0A1A4E;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 860px) {
+  .wp-hero {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .wp-hero-section {
+    padding: 3.5rem 1.5rem 3rem;
+  }
+
+  .wp-hero-panel {
+    order: -1;
+  }
+
+  .wp-panel-card {
+    max-width: 100%;
+  }
+
+  .wp-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .wp-nav-links {
+    display: none;
+  }
+
+  .wp-steps {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wp-step {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .wp-step-arrow {
+    transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 540px) {
+  .wp-features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wp-footer-links {
+    display: none;
+  }
+
+  .wp-stats-section,
+  .wp-how-section,
+  .wp-features-section,
+  .wp-cta-section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}
+
+
+
+
+

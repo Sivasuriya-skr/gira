@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gira – Worker Dashboard</title>
+<meta name="description" content="Gira Worker Dashboard – manage and track your helpdesk tickets in one place."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ============================================================
+   DESIGN TOKENS
+============================================================ */
+:root {
+  --yellow:      #FFCE32;
+  --yellow-dark: #E6B800;
+  --blue:        #1D63FF;
+  --blue-dark:   #0A1A4E;
+  --blue-mid:    #1550D4;
+  --bg:          #F0F4FF;
+  --white:       #FFFFFF;
+  --muted:       #6B7A99;
+  --green:       #22C55E;
+  --orange:      #F97316;
+  --red:         #EF4444;
+  --border:      rgba(29,99,255,0.09);
+  --shadow:      0 2px 16px rgba(29,99,255,0.07);
+  --shadow-hover:0 12px 32px rgba(29,99,255,0.14);
+}
+body.dark {
+  --bg:    #0C1228;
+  --white: #141D38;
+  --muted: #8896B3;
+  --blue-dark: #E8EDFF;
+  --border: rgba(255,255,255,0.07);
+  --shadow: 0 2px 16px rgba(0,0,0,0.3);
+  --shadow-hover: 0 12px 32px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--blue-dark);
+  display:flex;
+  flex-direction:row;
+  height:100vh;
+  width:100vw;
+  transition:background 0.3s,color 0.3s;
+}
+
+/* ============================================================
+   AMBIENT BLOBS
+============================================================ */
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.blob-1{width:600px;height:600px;background:#1D63FF;opacity:0.07;top:-100px;left:-180px;filter:blur(100px);animation:blobMove 14s ease-in-out infinite alternate;}
+.blob-2{width:450px;height:450px;background:#FFCE32;opacity:0.08;bottom:10%;right:-100px;filter:blur(100px);animation:blobMove 11s ease-in-out infinite alternate;animation-delay:-5s;}
+.blob-3{width:320px;height:320px;background:#1550D4;opacity:0.06;top:-60px;right:35%;filter:blur(100px);animation:blobMove 17s ease-in-out infinite alternate;animation-delay:-9s;}
+@keyframes blobMove{from{transform:translate(0,0);}to{transform:translate(28px,36px);}}
+.noise{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  width:260px;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(20px);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  z-index:100;
+  transition:background 0.3s;
+}
+body.dark .sidebar{background:rgba(20,29,56,0.97);}
+
+.sidebar-top{padding:22px;}
+.logo{
+  font-family:'Syne',sans-serif;font-size:24px;font-weight:800;
+  color:var(--blue-dark);letter-spacing:-0.03em;
+  display:flex;align-items:center;gap:6px;
+}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);display:inline-block;}
+.role-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:10px;padding:5px 12px;
+  background:rgba(255,206,50,0.10);
+  border:1px solid rgba(255,206,50,0.35);
+  border-radius:20px;font-size:11px;font-weight:600;
+  color:var(--blue-dark);
+}
+
+.sidebar-nav{flex:1;padding:8px 12px;overflow-y:auto;}
+.nav-section-label{
+  font-size:10px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.1em;
+  padding:14px 12px 6px;display:block;
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:10px;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;transition:all 0.18s;
+  position:relative;text-decoration:none;
+  margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(29,99,255,0.08);color:var(--blue-dark);}
+.nav-item.active{background:rgba(29,99,255,0.10);color:var(--blue);font-weight:600;}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:18px;background:var(--blue);border-radius:0 2px 2px 0;
+}
+.nav-icon{font-size:16px;width:20px;text-align:center;}
+.nav-badge{
+  margin-left:auto;background:var(--blue);color:white;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;
+}
+.nav-badge-yellow{background:var(--yellow);color:var(--blue-dark);}
+
+.sidebar-bottom{
+  border-top:1px solid var(--border);padding:14px 12px;
+}
+.user-card{
+  display:flex;align-items:center;gap:10px;
+  padding:10px;border-radius:10px;cursor:pointer;
+  transition:background 0.18s;
+}
+.user-card:hover{background:rgba(29,99,255,0.08);}
+.user-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#1D63FF,#1550D4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:white;
+  flex-shrink:0;
+}
+.user-info{flex:1;}
+.user-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--blue-dark);}
+.user-role{font-size:11px;color:var(--muted);}
+.logout-btn{
+  background:none;border:none;cursor:pointer;font-size:16px;
+  color:var(--muted);transition:color 0.18s;padding:4px;border-radius:6px;
+}
+.logout-btn:hover{color:var(--red);}
+
+/* ============================================================
+   MAIN AREA
+============================================================ */
+.main{
+  margin-left:260px;
+  flex:1;display:flex;flex-direction:column;
+  position:relative;z-index:2;
+  overflow:hidden;
+  height:100vh;
+}
+
+/* ============================================================
+   TOP NAVBAR
+============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  height:64px;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  display:flex;align-items:center;gap:16px;
+  flex-shrink:0;
+}
+body.dark .topbar{background:rgba(20,29,56,0.95);}
+.topbar-greeting{flex:1;}
+.greeting-main{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:700;
+  color:var(--blue-dark);letter-spacing:-0.02em;line-height:1.2;
+}
+.greeting-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+
+.search-bar{
+  width:240px;background:#F8FAFF;
+  border:1.5px solid #E2E8F4;border-radius:10px;
+  padding:8px 14px;display:flex;align-items:center;gap:8px;
+  transition:all 0.2s;
+}
+body.dark .search-bar{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);}
+.search-bar:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px rgba(29,99,255,0.07);}
+.search-bar input{
+  border:none;background:none;outline:none;font-size:13px;
+  font-family:'DM Sans',sans-serif;color:var(--blue-dark);width:100%;
+}
+.search-bar input::placeholder{color:#aab4cc;}
+.search-icon{color:#aab4cc;font-size:14px;flex-shrink:0;}
+
+.topbar-actions{display:flex;align-items:center;gap:10px;}
+.dark-toggle{
+  width:44px;height:24px;border-radius:12px;background:#E2E8F4;
+  border:none;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;
+}
+.dark-toggle.on{background:var(--blue);}
+.dark-toggle-knob{
+  position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;background:white;
+  transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.15);
+}
+.dark-toggle.on .dark-toggle-knob{transform:translateX(20px);}
+
+.notif-btn{
+  width:36px;height:36px;border-radius:9px;
+  background:rgba(29,99,255,0.08);border:none;cursor:pointer;
+  font-size:16px;position:relative;transition:background 0.18s;
+  display:flex;align-items:center;justify-content:center;
+}
+.notif-btn:hover{background:rgba(29,99,255,0.14);}
+.notif-dot{
+  position:absolute;top:4px;right:4px;width:7px;height:7px;
+  border-radius:50%;background:var(--red);border:2px solid white;
+}
+
+/* ============================================================
+   NOTIFICATION PANEL
+============================================================ */
+.notif-panel{
+  position:fixed;top:72px;right:20px;width:320px;
+  background:var(--white);border-radius:14px;
+  box-shadow:0 12px 40px rgba(29,99,255,0.13);
+  z-index:500;
+  opacity:0;transform:translateY(-10px);pointer-events:none;
+  transition:all 0.25s ease;
+}
+.notif-panel.open{opacity:1;transform:translateY(0);pointer-events:all;}
+.notif-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px 12px;border-bottom:1px solid var(--border);
+}
+.notif-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--blue-dark);}
+.notif-mark{font-size:12px;color:var(--blue);cursor:pointer;font-weight:500;}
+.notif-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 18px;cursor:pointer;transition:background 0.15s;
+  position:relative;
+}
+.notif-item:hover{background:#F8FAFF;}
+.notif-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;flex-shrink:0;
+}
+.notif-text{flex:1;}
+.notif-msg{font-size:13px;color:var(--blue-dark);font-weight:500;line-height:1.4;}
+.notif-time{font-size:11px;color:var(--muted);margin-top:2px;}
+.notif-unread{
+  width:8px;height:8px;border-radius:50%;background:var(--blue);
+  flex-shrink:0;margin-top:5px;
+}
+
+/* ============================================================
+   CONTENT AREA
+============================================================ */
+.content{
+  overflow-y:auto;overflow-x:hidden;
+  padding:28px 28px 80px;
+  flex:1;
+}
+
+/* Page title row */
+.page-title-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+  animation:fadeUp 0.4s ease both;
+}
+.page-title{
+  font-family:'Syne',sans-serif;font-size:26px;font-weight:800;
+  color:var(--blue-dark);letter-spacing:-0.03em;
+}
+.page-title span{color:var(--blue);}
+.create-btn{
+  background:var(--yellow);color:var(--blue-dark);
+  font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  padding:10px 20px;border-radius:10px;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:all 0.2s;box-shadow:0 4px 14px rgba(255,206,50,0.25);
+}
+.create-btn:hover{background:var(--yellow-dark);transform:translateY(-1px);box-shadow:0 8px 22px rgba(255,206,50,0.40);}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.anim{animation:fadeUp 0.5s ease both;}
+
+/* ============================================================
+   STAT CARDS
+============================================================ */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  margin-bottom:24px;
+}
+.stat-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:14px;padding:20px 22px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+  transition:transform 0.25s,box-shadow 0.25s;
+  cursor:default;
+}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);}
+.card-bar{height:4px;width:36px;border-radius:2px;margin-bottom:14px;}
+.card-bar-blue{background:var(--blue);}
+.card-bar-orange{background:var(--orange);}
+.card-bar-green{background:var(--green);}
+.card-emoji{
+  position:absolute;top:18px;right:18px;
+  width:36px;height:36px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.card-num{
+  font-family:'Syne',sans-serif;font-size:34px;font-weight:800;
+  color:var(--blue-dark);line-height:1;margin-bottom:6px;
+}
+.card-label{
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);
+}
+.card-delta{font-size:11px;margin-top:6px;font-weight:500;}
+.delta-green{color:var(--green);}
+.delta-red{color:var(--red);}
+.bg-blue-soft{background:rgba(29,99,255,0.08);}
+.bg-orange-soft{background:rgba(249,115,22,0.10);}
+.bg-green-soft{background:rgba(34,197,94,0.10);}
+.bg-yellow-soft{background:rgba(255,206,50,0.12);}
+
+/* ============================================================
+   MIDDLE ROW
+============================================================ */
+.mid-row{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:24px;}
+
+/* Journey Card */
+.card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:14px;padding:22px;
+  box-shadow:var(--shadow);transition:box-shadow 0.25s;
+}
+.card:hover{box-shadow:var(--shadow-hover);}
+.card-eyebrow{
+  font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.09em;margin-bottom:20px;
+}
+.journey-track{display:flex;align-items:flex-start;position:relative;}
+.j-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.j-dot{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  background:#F8FAFF;border:2px solid #E2E8F4;color:var(--muted);
+  position:relative;z-index:2;transition:all 0.3s;
+}
+.j-dot.done{background:var(--blue);border-color:var(--blue);color:white;box-shadow:0 0 0 5px rgba(29,99,255,0.12);}
+.j-dot.active{background:var(--yellow);border-color:var(--yellow);color:var(--blue-dark);box-shadow:0 0 0 5px rgba(255,206,50,0.2);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 5px rgba(255,206,50,0.2);}50%{box-shadow:0 0 0 10px rgba(255,206,50,0.05);}}
+.j-line{
+  position:absolute;top:18px;left:50%;width:100%;height:3px;
+  background:#E2E8F4;z-index:1;
+}
+.j-line.filled{background:var(--blue);}
+.j-label{
+  font-size:11px;font-weight:600;color:var(--muted);
+  margin-top:10px;text-align:center;
+}
+.j-label.active-lbl,.j-label.done-lbl{color:var(--blue-dark);font-weight:700;}
+
+/* Quick Summary card */
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--blue-dark);margin-bottom:14px;}
+.summary-row{
+  display:flex;align-items:center;gap:12px;
+  background:#F8FAFF;border-radius:10px;padding:10px 12px;
+  border:1px solid rgba(29,99,255,0.06);margin-bottom:10px;
+}
+body.dark .summary-row{background:rgba(255,255,255,0.04);}
+.sum-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sum-text{flex:1;}
+.sum-label{font-size:13px;font-weight:600;color:var(--blue-dark);}
+.sum-sub{font-size:11px;color:var(--muted);}
+.sum-val{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+
+/* ============================================================
+   BOTTOM ROW
+============================================================ */
+.bottom-row{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:24px;}
+
+/* Ticket Table */
+.table-card{background:var(--white);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;}
+.table-card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 14px;
+}
+.table-card-title{
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:700;
+  color:var(--blue-dark);
+  border-left:4px solid var(--yellow);padding-left:12px;
+}
+.view-all{font-size:13px;color:var(--blue);font-weight:600;cursor:pointer;text-decoration:none;}
+.view-all:hover{text-decoration:underline;}
+table{width:100%;border-collapse:collapse;}
+thead{background:#F8FAFF;}
+body.dark thead{background:rgba(255,255,255,0.04);}
+th{
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;
+  padding:11px 16px;border-bottom:1px solid var(--border);text-align:left;
+}
+td{
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  color:var(--blue-dark);padding:13px 16px;
+  border-bottom:1px solid var(--border);
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#F8FAFF;}
+body.dark tbody tr:hover{background:rgba(255,255,255,0.03);}
+.tkt-id{
+  font-size:11px;font-weight:600;color:var(--blue);
+  background:rgba(29,99,255,0.07);padding:3px 8px;border-radius:6px;
+  text-transform:uppercase;white-space:nowrap;
+}
+.pri-dot{display:inline-flex;align-items:center;gap:6px;font-size:13px;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid transparent;white-space:nowrap;}
+.badge-open{background:#EEF3FF;color:var(--blue);border-color:rgba(29,99,255,0.2);}
+.badge-inprog{background:#FFF7ED;color:var(--orange);border-color:rgba(249,115,22,0.2);}
+.badge-resolved{background:#F0FFF4;color:var(--green);border-color:rgba(34,197,94,0.2);}
+.badge-closed{background:#F1F5F9;color:#64748B;}
+.badge-assigned{background:#EEF3FF;color:var(--blue);border-color:rgba(29,99,255,0.2);}
+.badge-urgent{background:#FEF2F2;color:var(--red);border-color:rgba(239,68,68,0.2);}
+
+/* Activity Timeline */
+.timeline-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow);}
+.tl-item{display:flex;gap:12px;position:relative;padding-bottom:18px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0;}
+.tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.tl-line{width:2px;background:#E2E8F4;flex:1;margin-top:4px;min-height:14px;}
+.tl-right{flex:1;padding-top:2px;}
+.tl-title{font-size:13px;font-weight:600;color:var(--blue-dark);margin-bottom:3px;}
+.tl-time{font-size:11px;color:var(--muted);margin-bottom:5px;}
+
+/* ============================================================
+   CHARTS ROW
+============================================================ */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow);}
+.chart-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--blue-dark);margin-bottom:18px;}
+
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:90px;padding-top:10px;}
+.bar-item{display:flex;flex-direction:column;align-items:center;flex:1;gap:6px;}
+.bar{
+  width:100%;min-height:8px;max-height:72px;border-radius:6px 6px 0 0;
+  background:rgba(29,99,255,0.18);transition:transform 0.2s;
+  animation:barGrow 0.8s ease both;
+  cursor:pointer;
+}
+.bar:hover{transform:scaleY(1.05);transform-origin:bottom;}
+.bar.today{background:var(--yellow);}
+@keyframes barGrow{from{transform:scaleY(0);transform-origin:bottom;}to{transform:scaleY(1);transform-origin:bottom;}}
+.bar-label{font-size:9px;color:var(--muted);}
+.bar-label.today-lbl{color:var(--blue);font-weight:700;}
+
+/* Donut chart */
+.donut-wrap{display:flex;align-items:center;gap:24px;}
+.donut-svg-wrap{position:relative;flex-shrink:0;}
+.donut-center{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.donut-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--blue-dark);}
+.donut-sub{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;}
+.donut-legend{display:flex;flex-direction:column;gap:10px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:13px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.legend-name{color:var(--blue-dark);font-weight:600;font-family:'Syne',sans-serif;}
+.legend-pct{color:var(--muted);font-size:12px;}
+
+/* ============================================================
+   FAB
+============================================================ */
+.fab{
+  position:fixed;bottom:28px;right:28px;z-index:300;
+  width:56px;height:56px;border-radius:28px;
+  background:var(--yellow);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  overflow:hidden;
+  transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1),border-radius 0.4s;
+  box-shadow:0 6px 20px rgba(255,206,50,0.40);
+  white-space:nowrap;
+}
+.fab:hover{width:172px;border-radius:28px;background:var(--yellow-dark);}
+.fab-icon{font-size:22px;font-weight:700;flex-shrink:0;line-height:1;}
+.fab-text{
+  font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  color:var(--blue-dark);opacity:0;transition:opacity 0.3s;white-space:nowrap;
+}
+.fab:hover .fab-text{opacity:1;}
+
+.fab-menu{
+  position:fixed;bottom:94px;right:28px;z-index:290;
+  display:flex;flex-direction:column;gap:8px;
+  opacity:0;pointer-events:none;transition:all 0.25s ease;
+  transform:translateY(10px);
+}
+.fab-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.fab-opt{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:10px;padding:10px 16px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  color:var(--blue-dark);cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  transition:all 0.18s;white-space:nowrap;
+  box-shadow:var(--shadow);
+}
+.fab-opt:hover{transform:translateX(-4px);background:#EEF3FF;color:var(--blue);}
+
+/* ============================================================
+   DARK MODE OVERRIDES
+============================================================ */
+body.dark .card,
+body.dark .stat-card,
+body.dark .table-card,
+body.dark .timeline-card,
+body.dark .chart-card{
+  background:var(--white);border-color:var(--border);
+}
+body.dark .search-bar{background:rgba(255,255,255,0.05);}
+body.dark .summary-row,body.dark .notif-item:hover{background:rgba(255,255,255,0.04);}
+body.dark td,body.dark .tl-title,body.dark .legend-name,body.dark .notif-msg{color:var(--blue-dark);}
+body.dark .tkt-id{background:rgba(29,99,255,0.2);}
+body.dark .fab-opt{background:var(--white);}
+body.dark .notif-panel{background:var(--white);}
+</style>
+</head>
+<body>
+
+<!-- Ambient blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div class="noise"></div>
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="logo">gira<span class="logo-dot"></span></div>
+    <div class="role-badge">👷 Worker</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <span class="nav-section-label">Main</span>
+    <a class="nav-item active" id="nav-dashboard">
+      <span class="nav-icon">⊞</span> Dashboard
+    </a>
+    <a class="nav-item" id="nav-tickets">
+      <span class="nav-icon">📄</span> My Tickets
+      <span class="nav-badge">3</span>
+    </a>
+    <a class="nav-item" id="nav-create">
+      <span class="nav-icon">➕</span> Create Ticket
+      <span class="nav-badge nav-badge-yellow">New</span>
+    </a>
+
+    <span class="nav-section-label">Resources</span>
+    <a class="nav-item" id="nav-kb">
+      <span class="nav-icon">📖</span> Knowledge Base
+    </a>
+    <a class="nav-item" id="nav-reports">
+      <span class="nav-icon">📊</span> Reports
+    </a>
+    <a class="nav-item" id="nav-settings">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar">SS</div>
+      <div class="user-info">
+        <div class="user-name">Siva Suriya</div>
+        <div class="user-role">Field Worker</div>
+      </div>
+      <button class="logout-btn" title="Logout">↩</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ===================== MAIN ===================== -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-greeting">
+      <div class="greeting-main" id="greeting">Good morning, Siva 👋</div>
+      <div class="greeting-sub">Here's what's happening with your tickets today.</div>
+    </div>
+
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search tickets, issues…" id="search-input"/>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode">
+        <div class="dark-toggle-knob"></div>
+      </button>
+
+      <button class="notif-btn" id="notif-btn" title="Notifications">
+        🔔
+        <span class="notif-dot"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-header">
+      <span class="notif-title">Notifications</span>
+      <span class="notif-mark">Mark all read</span>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon bg-blue-soft">🎫</div>
+      <div class="notif-text">
+        <div class="notif-msg">TKT-0004 has been assigned to Sathi</div>
+        <div class="notif-time">2 min ago</div>
+      </div>
+      <div class="notif-unread"></div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon bg-green-soft">✅</div>
+      <div class="notif-text">
+        <div class="notif-msg">TKT-0002 has been resolved</div>
+        <div class="notif-time">1 hour ago</div>
+      </div>
+      <div class="notif-unread"></div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-icon bg-yellow-soft">⚡</div>
+      <div class="notif-text">
+        <div class="notif-msg">TKT-0003 is now In Progress</div>
+        <div class="notif-time">3 hours ago</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE CONTENT -->
+  <div class="content" id="main-content">
+
+    <!-- Page Title Row -->
+    <div class="page-title-row anim" style="animation-delay:0.05s">
+      <h1 class="page-title">Worker <span>Dashboard</span></h1>
+      <button class="create-btn" id="create-ticket-btn">
+        ＋ Create Ticket
+      </button>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card anim" style="animation-delay:0.10s">
+        <div class="card-bar card-bar-blue"></div>
+        <div class="card-emoji bg-blue-soft">🎫</div>
+        <div class="card-num" id="num-total">0</div>
+        <div class="card-label">Total Tickets</div>
+        <div class="card-delta delta-green">↑ 12% this week</div>
+      </div>
+      <div class="stat-card anim" style="animation-delay:0.15s">
+        <div class="card-bar card-bar-blue"></div>
+        <div class="card-emoji bg-blue-soft">📂</div>
+        <div class="card-num" id="num-open" style="color:var(--blue)">0</div>
+        <div class="card-label">Open Tickets</div>
+        <div class="card-delta delta-red">↓ 2 from yesterday</div>
+      </div>
+      <div class="stat-card anim" style="animation-delay:0.20s">
+        <div class="card-bar card-bar-orange"></div>
+        <div class="card-emoji bg-orange-soft">⚡</div>
+        <div class="card-num" id="num-inprog" style="color:var(--orange)">0</div>
+        <div class="card-label">In Progress</div>
+        <div class="card-delta delta-green">↑ 1 new today</div>
+      </div>
+      <div class="stat-card anim" style="animation-delay:0.25s">
+        <div class="card-bar card-bar-green"></div>
+        <div class="card-emoji bg-green-soft">✅</div>
+        <div class="card-num" id="num-resolved" style="color:var(--green)">0</div>
+        <div class="card-label">Resolved</div>
+        <div class="card-delta delta-green">↑ 3 this week</div>
+      </div>
+    </div>
+
+    <!-- MIDDLE ROW -->
+    <div class="mid-row">
+
+      <!-- Complaint Journey -->
+      <div class="card anim" style="animation-delay:0.30s">
+        <div class="card-eyebrow">Your Complaint Journey</div>
+        <div class="journey-track">
+
+          <div class="j-step">
+            <div class="j-dot done">✓</div>
+            <div class="j-line filled"></div>
+            <div class="j-label done-lbl">Submitted</div>
+          </div>
+
+          <div class="j-step">
+            <div class="j-dot done">✓</div>
+            <div class="j-line filled"></div>
+            <div class="j-label done-lbl">Assigned</div>
+          </div>
+
+          <div class="j-step">
+            <div class="j-dot active">3</div>
+            <div class="j-line"></div>
+            <div class="j-label active-lbl">In Progress</div>
+          </div>
+
+          <div class="j-step">
+            <div class="j-dot">4</div>
+            <div class="j-line"></div>
+            <div class="j-label">Testing</div>
+          </div>
+
+          <div class="j-step">
+            <div class="j-dot">5</div>
+            <div class="j-label">Resolved</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick Summary -->
+      <div class="card anim" style="animation-delay:0.35s">
+        <div class="card-title">Quick Summary</div>
+        <div class="summary-row">
+          <div class="sum-icon bg-orange-soft">🔥</div>
+          <div class="sum-text">
+            <div class="sum-label">Urgent Tickets</div>
+            <div class="sum-sub">Needs immediate attention</div>
+          </div>
+          <div class="sum-val" style="color:var(--orange)">1</div>
+        </div>
+        <div class="summary-row">
+          <div class="sum-icon bg-green-soft">⚡</div>
+          <div class="sum-text">
+            <div class="sum-label">Avg Response</div>
+            <div class="sum-sub">Time to first reply</div>
+          </div>
+          <div class="sum-val" style="color:var(--green)">2m</div>
+        </div>
+        <div class="summary-row">
+          <div class="sum-icon bg-blue-soft">👤</div>
+          <div class="sum-text">
+            <div class="sum-label">My Provider</div>
+            <div class="sum-sub">Currently assigned</div>
+          </div>
+          <div class="sum-val" style="color:var(--blue)">Sathi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="bottom-row">
+
+      <!-- Ticket Table -->
+      <div class="table-card anim" style="animation-delay:0.40s">
+        <div class="table-card-header">
+          <div class="table-card-title">My Tickets</div>
+          <a class="view-all">View all →</a>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Title</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Provider</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tkt-id">TKT-0001</span></td>
+              <td>Email login not working</td>
+              <td><span class="pri-dot"><span class="dot" style="background:var(--orange)"></span>High</span></td>
+              <td><span class="badge badge-resolved">Resolved</span></td>
+              <td>Sathi</td>
+              <td>24 Feb</td>
+            </tr>
+            <tr>
+              <td><span class="tkt-id">TKT-0002</span></td>
+              <td>VPN connection dropping</td>
+              <td><span class="pri-dot"><span class="dot" style="background:var(--yellow)"></span>Medium</span></td>
+              <td><span class="badge badge-resolved">Resolved</span></td>
+              <td>Priya</td>
+              <td>25 Feb</td>
+            </tr>
+            <tr>
+              <td><span class="tkt-id">TKT-0003</span></td>
+              <td>Printer offline in room 4</td>
+              <td><span class="pri-dot"><span class="dot" style="background:var(--green)"></span>Low</span></td>
+              <td><span class="badge badge-open">Open</span></td>
+              <td>—</td>
+              <td>26 Feb</td>
+            </tr>
+            <tr>
+              <td><span class="tkt-id">TKT-0004</span></td>
+              <td>Problem on login my laptop</td>
+              <td><span class="pri-dot"><span class="dot" style="background:var(--red)"></span>Critical</span></td>
+              <td><span class="badge badge-inprog">In Progress</span></td>
+              <td>Sathi</td>
+              <td>27 Feb</td>
+            </tr>
+            <tr>
+              <td><span class="tkt-id">TKT-0005</span></td>
+              <td>Software license expired</td>
+              <td><span class="pri-dot"><span class="dot" style="background:var(--orange)"></span>High</span></td>
+              <td><span class="badge badge-open">Open</span></td>
+              <td>—</td>
+              <td>27 Feb</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Activity Timeline -->
+      <div class="timeline-card anim" style="animation-delay:0.45s">
+        <div class="card-eyebrow">Recent Activity</div>
+
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-dot bg-blue-soft">🎫</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-right">
+            <div class="tl-title">TKT-0004 Submitted</div>
+            <div class="tl-time">27 Feb 09:12 AM</div>
+            <span class="badge badge-open">Open</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-dot bg-yellow-soft">👤</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-right">
+            <div class="tl-title">Assigned to Sathi</div>
+            <div class="tl-time">27 Feb 10:30 AM</div>
+            <span class="badge badge-assigned">Assigned</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-dot bg-orange-soft">⚡</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-right">
+            <div class="tl-title">Work started by Sathi</div>
+            <div class="tl-time">27 Feb 11:05 AM</div>
+            <span class="badge badge-inprog">In Progress</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-dot bg-green-soft">✅</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-right">
+            <div class="tl-title">TKT-0002 Resolved</div>
+            <div class="tl-time">25 Feb 03:40 PM</div>
+            <span class="badge badge-resolved">Resolved</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-left">
+            <div class="tl-dot" style="background:rgba(239,68,68,0.12)">🔥</div>
+          </div>
+          <div class="tl-right">
+            <div class="tl-title">TKT-0005 Critical raised</div>
+            <div class="tl-time">27 Feb 02:15 PM</div>
+            <span class="badge badge-urgent">Urgent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="charts-row">
+
+      <!-- Bar Chart -->
+      <div class="chart-card anim" style="animation-delay:0.50s">
+        <div class="chart-title">Tickets per Day</div>
+        <div class="bar-chart" id="bar-chart"></div>
+      </div>
+
+      <!-- Donut Chart -->
+      <div class="chart-card anim" style="animation-delay:0.55s">
+        <div class="chart-title">Issue Category Distribution</div>
+        <div class="donut-wrap">
+          <div class="donut-svg-wrap">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <!-- IT Issues 40% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#1D63FF" stroke-width="22"
+                stroke-dasharray="130.7 326.7" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+              <!-- Facility 25% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#FFCE32" stroke-width="22"
+                stroke-dasharray="81.7 326.7" stroke-dashoffset="-130.7" transform="rotate(-90 70 70)"/>
+              <!-- HR 20% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#F97316" stroke-width="22"
+                stroke-dasharray="65.3 326.7" stroke-dashoffset="-212.4" transform="rotate(-90 70 70)"/>
+              <!-- Other 15% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#22C55E" stroke-width="22"
+                stroke-dasharray="49.0 326.7" stroke-dashoffset="-277.7" transform="rotate(-90 70 70)"/>
+            </svg>
+            <div class="donut-center">
+              <span class="donut-num">5</span>
+              <span class="donut-sub">tickets</span>
+            </div>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#1D63FF"></div>
+              <span class="legend-name">IT Issues</span>
+              <span class="legend-pct">40%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#FFCE32"></div>
+              <span class="legend-name">Facility</span>
+              <span class="legend-pct">25%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#F97316"></div>
+              <span class="legend-name">HR</span>
+              <span class="legend-pct">20%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#22C55E"></div>
+              <span class="legend-name">Other</span>
+              <span class="legend-pct">15%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- FAB -->
+<button class="fab" id="fab" title="New Ticket">
+  <span class="fab-icon">＋</span>
+  <span class="fab-text">New Ticket</span>
+</button>
+
+<div class="fab-menu" id="fab-menu">
+  <div class="fab-opt">🎫 Create Ticket</div>
+  <div class="fab-opt">⚠️ Report Incident</div>
+  <div class="fab-opt">🔑 Request Access</div>
+</div>
+
+<script>
+/* ── Greeting ── */
+(function(){
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting').textContent = greet + ', Siva 👋';
+})();
+
+/* ── Count-up animation ── */
+function countUp(id, target, duration){
+  const el = document.getElementById(id);
+  if(!el) return;
+  let start = 0;
+  const step = Math.ceil(target / (duration / 30));
+  const iv = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = start;
+    if(start >= target) clearInterval(iv);
+  }, 30);
+}
+countUp('num-total',    5, 1200);
+countUp('num-open',     2, 1200);
+countUp('num-inprog',   1, 1200);
+countUp('num-resolved', 2, 1200);
+
+/* ── Dark mode ── */
+const darkBtn = document.getElementById('dark-toggle');
+darkBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  darkBtn.classList.toggle('on');
+});
+
+/* ── Notification panel ── */
+const notifBtn = document.getElementById('notif-btn');
+const notifPanel = document.getElementById('notif-panel');
+notifBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  notifPanel.classList.toggle('open');
+  fabMenu.classList.remove('open');
+});
+document.addEventListener('click', (e) => {
+  if(!notifPanel.contains(e.target) && e.target !== notifBtn){
+    notifPanel.classList.remove('open');
+  }
+});
+
+/* ── FAB menu ── */
+const fab = document.getElementById('fab');
+const fabMenu = document.getElementById('fab-menu');
+fab.addEventListener('click', (e) => {
+  e.stopPropagation();
+  fabMenu.classList.toggle('open');
+  notifPanel.classList.remove('open');
+});
+document.addEventListener('click', (e) => {
+  if(!fab.contains(e.target) && !fabMenu.contains(e.target)){
+    fabMenu.classList.remove('open');
+  }
+});
+
+/* ── Nav item clicks ── */
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+/* ── Create Ticket button ── */
+document.getElementById('create-ticket-btn').addEventListener('click', () => {
+  document.getElementById('nav-create').click();
+});
+
+/* ── Bar Chart ── */
+(function(){
+  const chart = document.getElementById('bar-chart');
+  const data = [2,4,1,3,5,2,3];
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const todayIdx = 4; // Friday
+  const maxVal = Math.max(...data);
+  data.forEach((val, i) => {
+    const item = document.createElement('div');
+    item.className = 'bar-item';
+    const height = Math.max(8, Math.round((val / maxVal) * 72));
+    const bar = document.createElement('div');
+    bar.className = 'bar' + (i === todayIdx ? ' today' : '');
+    bar.style.height = height + 'px';
+    bar.style.animationDelay = (i * 0.07) + 's';
+    const lbl = document.createElement('div');
+    lbl.className = 'bar-label' + (i === todayIdx ? ' today-lbl' : '');
+    lbl.textContent = days[i];
+    item.appendChild(bar);
+    item.appendChild(lbl);
+    chart.appendChild(item);
+  });
+})();
+</script>
+</body>
+</html>

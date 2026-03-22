@@ -37,6 +37,22 @@ public class UserController {
     }
 
     /**
+     * GET /api/users/role/{role}
+     * Returns all users with a specific role.
+     */
+    @GetMapping("/role/{role}")
+    public ResponseEntity<ApiResponse<List<UserDTO>>> getUsersByRole(@PathVariable String role) {
+        // Simple mapping: if role is provider, call the provider service
+        if ("provider".equalsIgnoreCase(role)) {
+            return ResponseEntity.ok(ApiResponse.ok(userService.getAllProviders()));
+        }
+        // Generic implementation would go here, but for now we follow the requirement
+        return ResponseEntity.ok(ApiResponse.ok(userService.getAllUsers().stream()
+                .filter(u -> u.getRole().equalsIgnoreCase(role))
+                .toList()));
+    }
+
+    /**
      * GET /api/users/{id}
      */
     @GetMapping("/{id}")

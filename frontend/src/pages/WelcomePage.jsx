@@ -1,456 +1,795 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import "./WelcomePage.css";
 
-const heroItems = ["badge", "h1", "sub", "ctas"];
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL HOOK (native IntersectionObserver)
+   Adds 'is-visible' class when element enters viewport
+   ───────────────────────────────────────────── */
+function useScrollReveal(options = {}) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
 
-const stats = [
-  { label: "Teams", value: 10000 },
-  { label: "Satisfaction", value: 98, suffix: "%" },
-  { label: "Response", value: 2, suffix: " min" },
-  { label: "Support", value: 24, suffix: "/7" },
-];
-
-const testimonials = [
-  { initials: "AL", quote: "Cut our response time in half.", name: "Ava Lopez" },
-  { initials: "KM", quote: "Agents love the new workflows.", name: "Kieran M." },
-  { initials: "SS", quote: "Delightful UI, powerful routing.", name: "Sal S." },
-  { initials: "JP", quote: "Happy customers, calmer team.", name: "Jules P." },
-  { initials: "RT", quote: "Onboarded in a day—wow.", name: "Ria Tan" },
-  { initials: "DB", quote: "Best helpdesk we’ve tried.", name: "Dane B." },
-];
-
-const steps = [
-  { title: "Submit a Ticket", desc: "Workers raise issues from web, chat, or email." },
-  { title: "AI Triages It", desc: "Smart routing, SLA detection, and summarization." },
-  { title: "Resolved Fast", desc: "Collaborate in one thread, ship quicker updates." },
-];
-
-const bentoCards = [
-  { id: "ai", title: "AI-Powered Ticketing", type: "hero" },
-  { id: "two-min", title: "2 min Avg Response", type: "response" },
-  { id: "csat", title: "98% Satisfaction", type: "csat" },
-  { id: "chat", title: "Live Chat", type: "chat" },
-  { id: "multi", title: "Multichannel", type: "multi" },
-  { id: "cta", title: "Start Free — No credit card needed", type: "cta" },
-];
-
-export default function WelcomePage() {
-  const navigate = useNavigate();
-  const cardRefs = useRef([]);
-  const sectionRefs = useRef([]);
-  const statRef = useRef(null);
-  const ringRef = useRef(null);
-  const connectRef = useRef(null);
-  const cursorRef = useRef(null);
-
-  // custom cursor
   useEffect(() => {
-    const cursor = cursorRef.current;
-    if (!cursor) return;
-    const move = (e) => {
-      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-    };
-    window.addEventListener("mousemove", move);
-    return () => window.removeEventListener("mousemove", move);
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -40px 0px", ...options }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
-  // scroll progress
+  return [ref, visible];
+}
+
+/* Wrapper component for scroll-reveal items */
+function Reveal({ children, className = "", delay = 0, direction = "up", style = {} }) {
+  const [ref, visible] = useScrollReveal();
+  const dirMap = { up: "reveal-up", right: "reveal-right", left: "reveal-left", "zoom": "reveal-zoom", "flip": "reveal-flip" };
+  const dirClass = dirMap[direction] || "reveal-up";
+  return (
+    <div
+      ref={ref}
+      className={`scroll-reveal ${dirClass}${visible ? " is-visible" : ""} ${className}`}
+      style={{ transitionDelay: `${delay}ms`, ...style }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   DATA
+   ───────────────────────────────────────────── */
+const NAV_LINKS = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "About", href: "#about" },
+];
+
+const STATS = [
+  { num: "10,000+", label: "Tickets Resolved" },
+  { num: "98%",     label: "Satisfaction Rate" },
+  { num: "3 min",   label: "Avg Response Time" },
+  { num: "500+",    label: "Teams Using Gira" },
+];
+
+const FEATURES = [
+  {
+    num: "01",
+    name: "Intelligent Ticket Routing",
+    desc: "AI-powered assignment engine automatically routes every ticket to the right agent based on expertise, workload, and priority — zero manual triage.",
+  },
+  {
+    num: "02",
+    name: "Real-Time Collaboration",
+    desc: "Internal notes, @mentions, and live presence indicators let your team work on tickets together without ever stepping on each other.",
+  },
+  {
+    num: "03",
+    name: "Omnichannel Inbox",
+    desc: "Email, chat, Slack, WhatsApp — every support channel lands in one clean inbox. Context travels with every conversation.",
+  },
+  {
+    num: "04",
+    name: "SLA Management & Alerts",
+    desc: "Define custom SLA policies. Get proactive alerts before deadlines slip. Dashboard visibility across every tier of your team.",
+  },
+  {
+    num: "05",
+    name: "Automated Workflows",
+    desc: "Build no-code automation rules that handle repetitive tasks — auto-tagging, escalation, canned responses — so agents focus on humans.",
+  },
+  {
+    num: "06",
+    name: "Analytics & Reporting",
+    desc: "Granular reports on CSAT, first-reply time, resolution rates, and agent performance. Export, schedule, and share with leadership.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote: "Gira cut our average resolution time by 40% in the first month. Our team finally has a tool that gets out of the way.",
+    name: "Priya Sharma",
+    role: "Head of Support · Nexova Labs",
+    initials: "PS",
+  },
+  {
+    quote: "The SLA management alone is worth every rupee. We used to miss deadlines weekly — now it's zero misses, three months running.",
+    name: "James Okoro",
+    role: "VP Customer Success · Finstack",
+    initials: "JO",
+  },
+  {
+    quote: "Clean, fast, and human. Gira is the first helpdesk tool my agents actually enjoy using.",
+    name: "Sara Lin",
+    role: "Support Manager · Driftwave",
+    initials: "SL",
+  },
+];
+
+const LOGOS = [
+  "NEXOVA", "FINSTACK", "DRIFTWAVE", "KUBEX", "AXONIFY", "LUMIO",
+];
+
+const MARQUEE_TEXT = [
+  "RESOLVE FASTER", "SCALE SMARTER", "SUPPORT BETTER", "GIRA HELPDESK",
+  "RESOLVE FASTER", "SCALE SMARTER", "SUPPORT BETTER", "GIRA HELPDESK",
+];
+
+/* ─────────────────────────────────────────────
+   NAVBAR
+   ───────────────────────────────────────────── */
+function Navbar() {
+  const [scrolled, setScrolled]     = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
-    const bar = document.querySelector(".lp-scrollbar");
-    const onScroll = () => {
-      const h = document.documentElement;
-      const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-      if (bar) bar.style.width = `${scrolled}%`;
-    };
-    window.addEventListener("scroll", onScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // entrance observer for cards and sections
+  // Prevent body scroll when mobile menu open
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("lp-card-visible");
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.28 }
-    );
-    cardRefs.current.forEach((el) => el && obs.observe(el));
-    sectionRefs.current.forEach((el) => el && obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
-  // hero stagger
-  useEffect(() => {
-    heroItems.forEach((id, idx) => {
-      const el = document.querySelector(`[data-hero="${id}"]`);
-      if (!el) return;
-      el.style.animation = `fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards`;
-      el.style.animationDelay = `${idx * 0.1 + 0.15}s`;
-    });
-  }, []);
-
-  // stats count when visible
-  useEffect(() => {
-    const nums = document.querySelectorAll("[data-count]");
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const target = parseInt(entry.target.dataset.count, 10) || 0;
-            const suffix = entry.target.dataset.suffix || "";
-            let start;
-            const duration = 1200;
-            const step = (ts) => {
-              if (!start) start = ts;
-              const p = Math.min((ts - start) / duration, 1);
-              const val = Math.floor(p * target);
-              entry.target.textContent = target >= 1000 ? val.toLocaleString() + suffix : val + suffix;
-              if (p < 1) requestAnimationFrame(step);
-              else entry.target.textContent = target >= 1000 ? target.toLocaleString() + suffix : target + suffix;
-            };
-            requestAnimationFrame(step);
-            io.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.35 }
-    );
-    nums.forEach((n) => io.observe(n));
-    return () => io.disconnect();
-  }, []);
-
-  // ring animation on visible
-  useEffect(() => {
-    const ring = ringRef.current;
-    if (!ring) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          const circle = ring.querySelector(".progress");
-          if (circle) circle.style.strokeDashoffset = 314 - 314 * 0.78;
-          io.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    io.observe(ring);
-    return () => io.disconnect();
-  }, []);
-
-  // connector line
-  useEffect(() => {
-    const line = connectRef.current;
-    if (!line) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          line.style.transform = "scaleX(1)";
-          io.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    io.observe(line);
-    return () => io.disconnect();
-  }, []);
-
-  // magnetic tilt removed for flatter hover lift
-  useEffect(() => {}, []);
-
-  // CTA particles
-  useEffect(() => {
-    const container = document.querySelector(".lp-particles");
-    if (!container) return;
-    for (let i = 0; i < 20; i++) {
-      const dot = document.createElement("span");
-      dot.style.left = `${Math.random() * 100}%`;
-      dot.style.bottom = `${Math.random() * 120}px`;
-      dot.style.animationDuration = `${12 + Math.random() * 8}s`;
-      dot.style.animationDelay = `${-Math.random() * 5}s`;
-      container.appendChild(dot);
-    }
-    return () => {
-      container.innerHTML = "";
-    };
-  }, []);
-
-  // marquee duplication for seamless loop
-  const marqueeItems = useMemo(() => [...testimonials, ...testimonials], []);
-
-  const handleRipple = (e) => {
-    const btn = e.currentTarget;
-    const ripple = document.createElement("span");
-    ripple.className = "lp-ripple-circle";
-    const rect = btn.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    ripple.style.width = ripple.style.height = `${size}px`;
-    ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
-    ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-    btn.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 650);
+  const scrollTo = (e, href) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="lp-root">
-      <div className="lp-scrollbar" />
-      <div className="lp-blobs">
-        <div className="lp-blob b1" />
-        <div className="lp-blob b2" />
-        <div className="lp-blob b3" />
-        <div className="lp-blob b4" />
-      </div>
-      <div className="lp-noise" aria-hidden="true" />
-      <div ref={cursorRef} className="lp-cursor" aria-hidden="true" />
-
-      <nav className="lp-nav">
-        <div className="lp-nav-left">
-          gira <span className="lp-logo-dot" />
-        </div>
-        <div className="lp-nav-center">
-          {["Features", "Pricing", "Docs", "About"].map((label) => (
-            <a key={label} href={`#${label.toLowerCase()}`} className="lp-nav-link">
-              {label}
+    <>
+      <nav className={`gira-nav${scrolled ? " scrolled" : ""}`}>
+        <div className="container">
+          <div className="nav-inner">
+            {/* Logo */}
+            <a href="#" className="nav-logo logo-font" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+              gira
             </a>
-          ))}
-        </div>
-        <div className="lp-nav-right">
-          <Link to="/login" className="lp-btn lp-btn-ghost">
-            Log in
-          </Link>
-          <button className="lp-btn lp-btn-yellow lp-btn-ripple" onClick={(e) => { handleRipple(e); navigate("/signup"); }}>
-            Get Started
-          </button>
+
+
+            {/* Desktop Links */}
+            <ul className="nav-links">
+              {NAV_LINKS.map(({ label, href }) => (
+                <li key={label}>
+                  <a href={href} onClick={(e) => scrollTo(e, href)}>{label}</a>
+                </li>
+              ))}
+            </ul>
+
+            {/* Desktop CTA */}
+            <Link to="/login" className="nav-cta">Get Started →</Link>
+
+            {/* Burger */}
+            <div
+              className="nav-burger"
+              role="button"
+              aria-label="Open menu"
+              tabIndex={0}
+              onClick={() => setMobileOpen(true)}
+              onKeyDown={(e) => e.key === "Enter" && setMobileOpen(true)}
+            >
+              <span /><span /><span />
+            </div>
+          </div>
         </div>
       </nav>
 
-      <div className="lp-page">
-        <header className="lp-hero">
-          <div className="lp-badge" data-hero="badge">
-            <span className="lp-badge-dot" /> Now in Beta
-          </div>
-          <h1 data-hero="h1">
-            <div>Support made</div>
-            <div className="lp-hero-line-blue">smarter.</div>
-            <div className="lp-hero-stroke">Reimagined.</div>
-          </h1>
-          <p className="lp-hero-sub" data-hero="sub">
-            Join 10,000+ teams using Gira to resolve tickets faster, automate workflows, and keep customers genuinely happy.
-          </p>
-          <div className="lp-hero-ctas" data-hero="ctas">
-            <button className="lp-btn lp-btn-yellow lp-btn-ripple" onClick={(e) => { handleRipple(e); navigate("/signup"); }}>
-              Get Started Free →
-            </button>
-            <button className="lp-btn lp-btn-ghost" onClick={() => window.scrollTo({ top: document.body.scrollHeight / 3, behavior: "smooth" })}>
-              Watch Demo ▶
-            </button>
-          </div>
-        </header>
+      {/* Mobile Menu */}
+      <div className={`mobile-menu${mobileOpen ? " open" : ""}`}>
+        <button className="mobile-close" aria-label="Close menu" onClick={() => setMobileOpen(false)}>✕</button>
+        {NAV_LINKS.map(({ label, href }) => (
+          <a key={label} href={href} onClick={(e) => scrollTo(e, href)}>{label}</a>
+        ))}
+        <Link to="/login" className="btn-purple" style={{ fontSize: 16 }} onClick={() => setMobileOpen(false)}>
+          Get Started →
+        </Link>
+      </div>
+    </>
+  );
+}
 
-        <section className="lp-stats" ref={(el) => (statRef.current = el)}>
-          {stats.map((s, i) => (
-            <div className="lp-stat" key={s.label}>
-              <div className="lp-stat-number" data-count={s.value} data-suffix={s.suffix || ""}>
-                0
-              </div>
-              <p className="lp-stat-label">{s.label}</p>
+/* ─────────────────────────────────────────────
+   HERO
+   ───────────────────────────────────────────── */
+function HeroSection() {
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 18,
+    mass: 0.6,
+  });
+
+  const card1Y = useTransform(smoothProgress, [0, 0.33], [0, -140]);
+  const card1Opacity = useTransform(smoothProgress, [0, 0.33], [1, 0]);
+  const card1Rotate = useTransform(smoothProgress, [0, 0.33], [0, -1]);
+
+  const card2Y = useTransform(smoothProgress, [0.16, 0.45], [140, 0]);
+  const card2Opacity = useTransform(smoothProgress, [0.18, 0.42], [0, 1]);
+  const card2Scale = useTransform(smoothProgress, [0.18, 0.42], [0.95, 1]);
+
+  const card3Y = useTransform(smoothProgress, [0.48, 0.75], [200, 0]);
+  const card3Opacity = useTransform(smoothProgress, [0.5, 0.72], [0, 1]);
+  const card3Scale = useTransform(smoothProgress, [0.5, 0.72], [0.94, 1]);
+
+  return (
+    <section className="hero-section" id="hero" ref={sectionRef}>
+      <div className="hero-gradient" />
+      <div className="hero-noise" />
+
+      <div className="hero-shell">
+        <div className="hero-grid">
+          <div className="hero-left">
+            <span className="hero-eyebrow">
+              Enterprise intelligence, human touch
+            </span>
+
+            <h1 className="hero-headline">
+              Support that feels <span className="headline-outline">HUMAN.</span>
+            </h1>
+
+            <h2 className="hero-subline">
+              Scales like software.
+            </h2>
+
+            <p className="hero-copy">
+              Gira is the helpdesk platform built for teams who refuse to trade quality for speed.
+              Resolve smarter, collaborate faster, and delight every customer.
+            </p>
+
+            <div className="hero-cta">
+              <Link to="/signup" className="btn-primary">
+                Start free trial
+              </Link>
+              <a
+                href="#features"
+                className="btn-ghost"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.querySelector("#features")?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                See platform
+              </a>
+            </div>
+
+            <div className="hero-proof">
+              <div className="pill live">Live</div>
+              <span>Operational · 99.99% uptime</span>
+              <span className="dot-sep" />
+              <span>98% CSAT last 30d</span>
+              <span className="dot-sep" />
+              <span>120 active conversations</span>
+            </div>
+          </div>
+
+          <div className="hero-right">
+            <div className="card-stack">
+              <motion.div
+                className="glass-card card-one"
+                style={{ y: card1Y, opacity: card1Opacity, rotate: card1Rotate }}
+              >
+                <div className="card-top">
+                  <div>
+                    <div className="card-label"><span className="logo-font">gira</span> Workspace</div>
+
+                    <div className="card-subtle">Live queue</div>
+                  </div>
+                  <div className="pill">Queue · realtime</div>
+                </div>
+
+                <div className="ticket-rows">
+                  {[
+                    { status: "open", text: "Login issue · unable to access dashboard", time: "2m" },
+                    { status: "warn", text: "Bulk import stalled at 65%", time: "9m" },
+                    { status: "closed", text: "API key regeneration request", time: "14m" },
+                    { status: "open", text: "Email notifications not arriving", time: "21m" },
+                    { status: "warn", text: "SSO config · Azure AD", time: "34m" },
+                  ].map((t, i) => (
+                    <div className="ticket-row" key={i}>
+                      <span className={`status-dot ${t.status}`} />
+                      <span className="ticket-text">{t.text}</span>
+                      <span className="ticket-time">{t.time}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="card-footer">
+                  <div className="pulse-dot" />
+                  <span>Live triage with AI assist</span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="glass-card card-two"
+                style={{ y: card2Y, opacity: card2Opacity, scale: card2Scale }}
+              >
+                <div className="card-top">
+                  <div>
+                    <div className="card-label">Team Performance</div>
+                    <div className="card-subtle">Precision metrics</div>
+                  </div>
+                  <div className="pill ghost">SLA · 99.4%</div>
+                </div>
+
+                <div className="metric-grid">
+                  {[
+                    { label: "CSAT", value: "98%", accent: "purple" },
+                    { label: "Avg reply", value: "2.8m", accent: "blue" },
+                    { label: "Backlog", value: "18", accent: "amber" },
+                  ].map((m) => (
+                    <div className="metric-card" key={m.label}>
+                      <div className="metric-label">{m.label}</div>
+                      <div className={`metric-value ${m.accent}`}>{m.value}</div>
+                      <div className="metric-progress">
+                        <span className={`metric-bar ${m.accent}`} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="legend-row">
+                  <div className="legend-item">
+                    <span className="legend-dot green" />
+                    On track
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-dot amber" />
+                    Watchlist
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-dot red" />
+                    Breach risk
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="glass-card card-three"
+                style={{ y: card3Y, opacity: card3Opacity, scale: card3Scale }}
+              >
+                <div className="card-top">
+                  <div>
+                    <div className="card-label">AI Automation</div>
+                    <div className="card-subtle">Precision workflows</div>
+                  </div>
+                  <div className="pill">Bot · ON</div>
+                </div>
+
+                <div className="automation-rows">
+                  {[
+                    { title: "Intent detection", desc: "Routes by urgency + owner", state: "active" },
+                    { title: "Suggested replies", desc: "Tone-safe, multilingual", state: "active" },
+                    { title: "Auto-tag & SLA", desc: "Policy-based escalations", state: "active" },
+                    { title: "Handoff guardrails", desc: "No dead ends for customers", state: "guard" },
+                  ].map((item) => (
+                    <div className="automation-row" key={item.title}>
+                      <div>
+                        <div className="automation-title">{item.title}</div>
+                        <div className="automation-desc">{item.desc}</div>
+                      </div>
+                      <span className={`pill ${item.state === "guard" ? "ghost" : ""}`}>
+                        {item.state === "guard" ? "Guarded" : "Active"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bot-footer">
+                  <div className="bot-avatar">λ</div>
+                  <div>
+                    <div className="card-subtle">AI Agent</div>
+                    <div className="bot-status">
+                      Handles handoffs in <span className="accent-purple">0.8s</span> with human-grade tone.
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   LOGOS SECTION
+   ───────────────────────────────────────────── */
+function LogosSection() {
+  return (
+    <div className="logos-section">
+      <div className="container">
+        <Reveal><p className="logos-label">Trusted by forward-thinking teams worldwide</p></Reveal>
+        <div className="logos-row">
+          {LOGOS.map((logo, i) => (
+            <Reveal key={logo} delay={i * 60}>
+              <div className="logo-item">{logo}</div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   MARQUEE STRIP
+   ───────────────────────────────────────────── */
+function MarqueeStrip() {
+  return (
+    <div className="marquee-wrapper" aria-hidden="true">
+      <div className="marquee-track">
+        {MARQUEE_TEXT.map((txt, i) => (
+          <span key={i}>· {txt}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   STATS SECTION
+   ───────────────────────────────────────────── */
+function StatsSection() {
+  return (
+    <section className="stats-section">
+      <div className="container">
+        <div className="row g-0">
+          {STATS.map((s, i) => (
+            <div key={s.num} className="col-6 col-md-3 stat-col text-center">
+              <Reveal direction="zoom" delay={i * 100}>
+                <span className="stat-number">{s.num}</span>
+                <span className="stat-label">{s.label}</span>
+              </Reveal>
             </div>
           ))}
-        </section>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <section id="features" className="lp-features">
-          <div className="lp-features-header">
-            <span className="lp-section-eyebrow">FEATURES</span>
-            <h3 className="lp-section-title">Everything your support team needs</h3>
-            <div className="lp-section-underline" />
+/* ─────────────────────────────────────────────
+   FEATURES SECTION
+   ───────────────────────────────────────────── */
+function FeaturesSection() {
+  return (
+    <section className="features-section" id="features">
+      <div className="container">
+        <div className="row g-5">
+
+          {/* Sticky heading col */}
+          <div className="col-lg-4 features-heading-col">
+            <Reveal direction="right">
+              <h2 className="features-heading">
+                Everything<br />your team<br />needs.
+              </h2>
+              <p className="features-heading-sub">
+                Six core pillars that power world-class support operations —
+                from solo teams to enterprise.
+              </p>
+              <div style={{ marginTop: 40, height: 1, background: "#222", maxWidth: 120 }} />
+              <p style={{ marginTop: 24, fontFamily: "'Mulish', sans-serif", fontWeight: 300, fontSize: 13, color: "#444" }}>
+                Every feature ships on day one.<br />No paywalls. No add-ons.
+              </p>
+            </Reveal>
           </div>
-          <div className="lp-bento">
-            {bentoCards.map((card, idx) => (
-              <article
-                key={card.id}
-                ref={(el) => (cardRefs.current[idx] = el)}
-                className={`lp-card card-${card.id}`}
-                style={{ transitionDelay: `${idx * 0.12}s` }}
-              >
-                {card.type === "hero" && (
-                  <>
-                    <span className="lp-badge-ai">AI</span>
-                    <h4>{card.title}</h4>
-                    <p>Prioritize, route, and summarize tickets with context-aware AI.</p>
-                    <div className="lp-ticket-list">
-                      <div className="lp-ticket">
-                        Ticket #4821 <span className="pill green">Resolved</span>
-                      </div>
-                      <div className="lp-ticket">
-                        Ticket #4822 <span className="pill amber">In Progress</span>
-                      </div>
-                      <div className="lp-ticket">
-                        Ticket #4823 <span className="pill blue">Assigned</span>
-                      </div>
-                    </div>
-                  </>
-                )}
 
-                {card.type === "response" && (
-                  <>
-                    <h4>{card.title}</h4>
-                    <div className="lp-number-giant" style={{ color: "#0A1A4E" }}>
-                      2m
-                    </div>
-                    <div className="lp-ring" ref={(el) => (ringRef.current = el)}>
-                      <svg width="120" height="120">
-                        <circle className="track" cx="60" cy="60" r="50" strokeWidth="12" fill="none" />
-                        <circle className="progress" cx="60" cy="60" r="50" strokeWidth="12" fill="none" />
-                      </svg>
-                    </div>
-                  </>
-                )}
-
-                {card.type === "csat" && (
-                  <>
-                    <h4>{card.title}</h4>
-                    <div className="lp-number-giant" data-count="98" data-suffix="%">
-                      0%
-                    </div>
-                    <svg className="lp-trend" viewBox="0 0 120 40" preserveAspectRatio="none">
-                      <path d="M5 30 L35 18 L55 22 L80 10 L115 6" stroke="#22C55E" strokeWidth="4" fill="none" strokeLinecap="round" />
-                    </svg>
-                  </>
-                )}
-
-                {card.type === "chat" && (
-                  <div className="lp-livechat">
-                    <h4>{card.title}</h4>
-                    <div className="lp-bubble user">Hi! Need help with SLAs.</div>
-                    <div className="lp-bubble agent">Sure — setting auto-escalation now.</div>
-                    <div className="lp-typing">
-                      <span />
-                      <span />
-                      <span />
-                    </div>
+          {/* Feature list col */}
+          <div className="col-lg-8">
+            {FEATURES.map((f, i) => (
+              <Reveal key={f.num} delay={i * 80}>
+                <div className="feature-item">
+                  <div className="feature-num">{f.num}</div>
+                  <div className="feature-content">
+                    <div className="feature-name">{f.name}</div>
+                    <p className="feature-desc">{f.desc}</p>
                   </div>
-                )}
-
-                {card.type === "multi" && (
-                  <>
-                    <h4>{card.title}</h4>
-                    <p>Email, chat, phone, and social — one thread, one SLA.</p>
-                    <div className="lp-icon-grid">
-                      {["📧 Email", "💬 Chat", "📞 Phone", "🌐 Social"].map((txt) => (
-                        <div key={txt} className="lp-icon-pill">
-                          {txt}
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {card.type === "cta" && (
-                  <div className="lp-cta-card">
-                    <div className="lp-cta-text">
-                      <h4>{card.title}</h4>
-                      <p>No card required. Launch in minutes.</p>
-                    </div>
-                    <button className="lp-cta-btn" onClick={(e) => { handleRipple(e); navigate("/signup"); }}>
-                      Get Started →
-                    </button>
-                  </div>
-                )}
-              </article>
+                </div>
+              </Reveal>
             ))}
           </div>
-        </section>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <section id="docs" className="lp-how">
-          <h3 className="lp-section-title">How it works</h3>
-          <div className="lp-steps">
-            <div ref={connectRef} className="lp-connect" />
-            {steps.map((step, idx) => (
-              <div
-                key={step.title}
-                className="lp-step-card"
-                ref={(el) => (sectionRefs.current[idx] = el)}
-                style={{ transitionDelay: `${idx * 0.12}s` }}
-              >
-                <div className="lp-step-num">{idx + 1}</div>
-                <h5>{step.title}</h5>
-                <p>{step.desc}</p>
+/* ─────────────────────────────────────────────
+   PRICING SECTION
+   ───────────────────────────────────────────── */
+const PLANS = [
+  {
+    name: "Launch",
+    price: "₹1",
+    cadence: "agent / month",
+    tagline: "Everything to get moving fast.",
+    features: [
+      "Shared inbox & SLAs",
+      "Macros and tagging",
+      "CSAT surveys",
+      "Email & chat channels",
+      "Basic automation rules",
+    ],
+    cta: "Start free",
+    accent: "purple",
+  },
+  {
+    name: "Scale",
+    price: "₹10",
+    cadence: "agent / month",
+    tagline: "Built for growing teams that need control.",
+    features: [
+      "Advanced routing (skills, load)",
+      "Custom roles & approvals",
+      "Workflow builder",
+      "Analytics & scheduled reports",
+      "Priority support",
+    ],
+    cta: "Talk to sales",
+    accent: "blue",
+    popular: true,
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    cadence: "per org",
+    tagline: "Security, scale, and white-glove rollout.",
+    features: [
+      "SAML/SSO & SCIM",
+      "Data residency options",
+      "Dedicated CSM",
+      "Onboarding & migration",
+      "99.99% uptime SLA",
+    ],
+    cta: "Book a demo",
+    accent: "green",
+  },
+];
+
+function PricingSection() {
+  return (
+    <section className="pricing-section" id="pricing">
+      <div className="container">
+        <Reveal direction="up">
+          <div className="pricing-header">
+            <p className="eyebrow">Pricing</p>
+            <h2>Choose a plan that scales with you.</h2>
+            <p className="pricing-sub">
+              Simple, transparent pricing. Upgrade only when your team is ready.
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="pricing-grid">
+          {PLANS.map((plan, idx) => (
+            <Reveal key={plan.name} delay={idx * 80}>
+              <div className={`pricing-card ${plan.popular ? "popular" : ""}`}>
+                {plan.popular && <div className="pill popular-pill">Most popular</div>}
+                <div className="pricing-top">
+                  <div className="pricing-name">{plan.name}</div>
+                  <div className="pricing-price">
+                    <span className="price">{plan.price}</span>
+                    <span className="cadence">/{plan.cadence}</span>
+                  </div>
+                  <div className="pricing-tagline">{plan.tagline}</div>
+                </div>
+                <ul className="pricing-features">
+                  {plan.features.map((f) => (
+                    <li key={f}>
+                      <span className={`check ${plan.accent}`} />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <a className={`pricing-cta ${plan.accent}`} href="#hero" onClick={(e)=>{e.preventDefault(); document.querySelector("#hero")?.scrollIntoView({behavior:"smooth"});}}>
+                  {plan.cta}
+                </a>
               </div>
-            ))}
-          </div>
-        </section>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <section id="pricing" className="lp-testimonials">
-          <div className="lp-marquee">
-            {marqueeItems.map((t, i) => (
-              <div className="lp-quote" key={`${t.initials}-${i}`}>
-                <div className="lp-avatar">{t.initials}</div>
+/* ─────────────────────────────────────────────
+   ABOUT SECTION
+   ───────────────────────────────────────────── */
+function AboutSection() {
+  return (
+    <section className="about-section" id="about">
+      <div className="container">
+        <div className="about-grid">
+          <Reveal direction="right">
+            <div className="about-copy">
+              <p className="eyebrow">About Gira</p>
+              <h2>Enterprise support with a human heartbeat.</h2>
+              <p className="about-sub">
+                Gira blends precision automation with empathetic workflows. From intent-aware routing to
+                AI-assisted replies, every touchpoint is designed to feel personal—no matter how fast you scale.
+              </p>
+              <div className="about-pills">
+                <span className="pill ghost">Founded 2026</span>
+                <span className="pill ghost">Remote-first</span>
+                <span className="pill ghost">Security-first</span>
+              </div>
+              <div className="about-metrics">
                 <div>
-                  <p className="lp-quote-text">{t.quote}</p>
-                  <div className="lp-quote-name">{t.name}</div>
+                  <div className="about-num">99.99%</div>
+                  <div className="about-label">Uptime commitment</div>
+                </div>
+                <div>
+                  <div className="about-num">45+</div>
+                  <div className="about-label">Integrations</div>
+                </div>
+                <div>
+                  <div className="about-num">24/7</div>
+                  <div className="about-label">Global support</div>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+            </div>
+          </Reveal>
 
-        <section id="about" className="lp-cta">
-          <div className="lp-cta-blob" />
-          <div className="lp-particles" aria-hidden="true" />
-          <h3>Ready to transform your support?</h3>
-          <p>Automate the busywork, empower agents, and give customers a support experience they’ll love.</p>
-          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            <button className="lp-btn lp-btn-yellow lp-btn-ripple" onClick={handleRipple}>
-              Start Free
-            </button>
-            <button className="lp-btn lp-btn-ghost">Talk to sales</button>
-          </div>
-        </section>
-
-        <footer className="lp-footer">
-          <div className="lp-footer-top">
-            <div>
-              <div className="lp-footer-logo">
-                gira <span className="lp-logo-dot" />
+          <Reveal delay={120}>
+            <div className="about-panel">
+              <div className="about-panel-header">
+                <span>Security & Compliance</span>
+                <span className="pill ghost">Audit-ready</span>
               </div>
-              <p style={{ color: "var(--text-muted)" }}>Support made smarter for modern teams.</p>
+              <ul className="about-list">
+                {[
+                  "SOC 2 controls in place; pen-tested quarterly",
+                  "SAML SSO, SCIM, RBAC, and audit trails",
+                  "Data residency options (US/EU) with backups",
+                  "PII redaction and secret vaulting for tickets",
+                ].map((item) => (
+                  <li key={item}>
+                    <span className="about-dot" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="about-footer">
+                Built for teams that need reliability without sacrificing empathy.
+              </div>
             </div>
-            <div>
-              <h6>Product</h6>
-              <a href="#features">Features</a>
-              <a href="#pricing">Pricing</a>
-              <a href="#docs">Docs</a>
-            </div>
-            <div>
-              <h6>Company</h6>
-              <a href="#about">About</a>
-              <a href="#careers">Careers</a>
-              <a href="#blog">Blog</a>
-            </div>
-            <div>
-              <h6>Legal</h6>
-              <a href="#privacy">Privacy</a>
-              <a href="#terms">Terms</a>
-              <a href="#security">Security</a>
-            </div>
-          </div>
-          <div className="lp-footer-bottom">
-            <span>© {new Date().getFullYear()} Gira. All rights reserved.</span>
-            <div className="lp-socials">
-              {["X", "in", "YT"].map((s) => (
-                <a key={s} href="#" aria-label={s}>
-                  {s}
-                </a>
-              ))}
-            </div>
-          </div>
-        </footer>
+          </Reveal>
+        </div>
       </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   TESTIMONIALS
+   ───────────────────────────────────────────── */
+function TestimonialsSection() {
+  return (
+    <section className="testimonials-section">
+      <div className="container">
+        <Reveal><span className="testimonial-label">What teams are saying</span></Reveal>
+        <div className="row g-0">
+          {TESTIMONIALS.map((t, i) => (
+            <div key={i} className="col-lg-4 testimonial-card pe-lg-5">
+              <Reveal delay={i * 120}>
+                <p className="testimonial-quote">"{t.quote}"</p>
+                <div className="testimonial-author">
+                  <div className="author-avatar">{t.initials}</div>
+                  <div>
+                    <div className="author-info-name">{t.name}</div>
+                    <div className="author-info-role">{t.role}</div>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER CTA
+   ───────────────────────────────────────────── */
+function FooterCTA() {
+  return (
+    <section className="footer-cta-section">
+      <div className="container">
+        <Reveal>
+          <h2 className="footer-cta-heading">
+            Ready to transform<br />
+            your <span>support?</span>
+          </h2>
+        </Reveal>
+
+        <Reveal delay={120}>
+          <p className="footer-cta-sub">
+            Join 500+ teams already using Gira to resolve faster,
+            scale smarter, and support better.
+          </p>
+        </Reveal>
+
+        <Reveal delay={240} style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
+          <Link to="/signup" className="btn-purple" style={{ padding: "18px 44px", fontSize: 16 }}>
+            Get Started Free →
+          </Link>
+          <Link to="/login" style={{
+            fontFamily: "'Mulish', sans-serif",
+            fontWeight: 400,
+            fontSize: 15,
+            color: "#555",
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+            transition: "color 0.2s",
+          }}
+            onMouseEnter={e => e.currentTarget.style.color = "#7c3aed"}
+            onMouseLeave={e => e.currentTarget.style.color = "#555"}
+          >
+            Already have an account? Sign in
+          </Link>
+        </Reveal>
+
+        {/* Footer bar */}
+        <div className="footer-bar">
+          <span className="footer-logo logo-font">gira</span>
+
+          <span className="footer-copy">© 2026 Gira. All rights reserved.</span>
+          <div className="footer-links">
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+            <a href="#">Status</a>
+            <a href="#">Contact</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   PAGE ROOT
+   ───────────────────────────────────────────── */
+export default function WelcomePage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  return (
+    <div className="gira-landing">
+      <Navbar />
+      <HeroSection />
+      <LogosSection />
+      <MarqueeStrip />
+      <StatsSection />
+      <FeaturesSection />
+      <PricingSection />
+      <AboutSection />
+      <TestimonialsSection />
+      <FooterCTA />
     </div>
   );
 }

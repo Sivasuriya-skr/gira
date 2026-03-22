@@ -1,0 +1,184 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.gira:backend >--------------------------
+[INFO] Building gira-backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.11:run (default-cli) > test-compile @ backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ backend ---
+[INFO] skip non existing resourceDirectory C:\Users\SIVASURIYA S\Desktop\gira\backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ backend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:3.5.11:run (default-cli) < test-compile @ backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.11:run (default-cli) @ backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.11)
+
+2026-03-09T18:54:21.906+05:30  INFO 20288 --- [gira-backend] [           main] com.gira.backend.BackendApplication      : Starting BackendApplication using Java 21.0.8 with PID 20288 (C:\Users\SIVASURIYA S\Desktop\gira\backend\target\classes started by SIVASURIYA S in C:\Users\SIVASURIYA S\Desktop\gira\backend)
+2026-03-09T18:54:21.912+05:30 DEBUG 20288 --- [gira-backend] [           main] com.gira.backend.BackendApplication      : Running with Spring Boot v3.5.11, Spring v6.2.16
+2026-03-09T18:54:21.914+05:30  INFO 20288 --- [gira-backend] [           main] com.gira.backend.BackendApplication      : No active profile set, falling back to 1 default profile: "default"
+2026-03-09T18:54:23.077+05:30  INFO 20288 --- [gira-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-09T18:54:23.200+05:30  INFO 20288 --- [gira-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 92 ms. Found 2 JPA repository interfaces.
+2026-03-09T18:54:24.215+05:30  INFO 20288 --- [gira-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-03-09T18:54:24.241+05:30  INFO 20288 --- [gira-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-09T18:54:24.241+05:30  INFO 20288 --- [gira-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-03-09T18:54:24.353+05:30  INFO 20288 --- [gira-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-09T18:54:24.355+05:30  INFO 20288 --- [gira-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2344 ms
+2026-03-09T18:54:24.552+05:30  INFO 20288 --- [gira-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-09T18:54:24.856+05:30  INFO 20288 --- [gira-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7634f2b
+2026-03-09T18:54:24.860+05:30  INFO 20288 --- [gira-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-09T18:54:26.116+05:30  INFO 20288 --- [gira-backend] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-09T18:54:26.227+05:30  INFO 20288 --- [gira-backend] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.42.Final
+2026-03-09T18:54:26.292+05:30  INFO 20288 --- [gira-backend] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-03-09T18:54:26.812+05:30  INFO 20288 --- [gira-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-09T18:54:26.927+05:30  WARN 20288 --- [gira-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-09T18:54:26.949+05:30  INFO 20288 --- [gira-backend] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.43
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-09T18:54:28.405+05:30  INFO 20288 --- [gira-backend] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-09T18:54:28.543+05:30  INFO 20288 --- [gira-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-09T18:54:29.200+05:30  WARN 20288 --- [gira-backend] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-09T18:54:30.144+05:30  INFO 20288 --- [gira-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-03-09T18:54:30.158+05:30  INFO 20288 --- [gira-backend] [           main] com.gira.backend.BackendApplication      : Started BackendApplication in 9.11 seconds (process running for 10.021)
+2026-03-09T18:54:47.894+05:30  INFO 20288 --- [gira-backend] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+DEBUG: Jakarta Mail version 2.1.5
+DEBUG: URL jar:file:/C:/Users/SIVASURIYA%20S/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.5/jakarta.mail-2.0.5.jar!/META-INF/jakarta.providers
+DEBUG: successfully loaded resource: jar:file:/C:/Users/SIVASURIYA%20S/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.5/jakarta.mail-2.0.5.jar!/META-INF/jakarta.providers
+DEBUG: successfully loaded resource: /META-INF/jakarta.default.providers
+DEBUG: Tables of loaded providers
+DEBUG: Providers Listed By Class Name: {org.eclipse.angus.mail.imap.IMAPStore=jakarta.mail.Provider[STORE,imap,org.eclipse.angus.mail.imap.IMAPStore,Oracle], org.eclipse.angus.mail.smtp.SMTPTransport=jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle], org.eclipse.angus.mail.pop3.POP3Store=jakarta.mail.Provider[STORE,pop3,org.eclipse.angus.mail.pop3.POP3Store,Oracle], org.eclipse.angus.mail.pop3.POP3SSLStore=jakarta.mail.Provider[STORE,pop3s,org.eclipse.angus.mail.pop3.POP3SSLStore,Oracle], org.eclipse.angus.mail.smtp.SMTPSSLTransport=jakarta.mail.Provider[TRANSPORT,smtps,org.eclipse.angus.mail.smtp.SMTPSSLTransport,Oracle], org.eclipse.angus.mail.imap.IMAPSSLStore=jakarta.mail.Provider[STORE,imaps,org.eclipse.angus.mail.imap.IMAPSSLStore,Oracle]}
+DEBUG: Providers Listed By Protocol: {imap=jakarta.mail.Provider[STORE,imap,org.eclipse.angus.mail.imap.IMAPStore,Oracle], smtp=jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle], pop3=jakarta.mail.Provider[STORE,pop3,org.eclipse.angus.mail.pop3.POP3Store,Oracle], imaps=jakarta.mail.Provider[STORE,imaps,org.eclipse.angus.mail.imap.IMAPSSLStore,Oracle], smtps=jakarta.mail.Provider[TRANSPORT,smtps,org.eclipse.angus.mail.smtp.SMTPSSLTransport,Oracle], pop3s=jakarta.mail.Provider[STORE,pop3s,org.eclipse.angus.mail.pop3.POP3SSLStore,Oracle]}
+DEBUG: successfully loaded resource: /META-INF/jakarta.default.address.map
+DEBUG: URL jar:file:/C:/Users/SIVASURIYA%20S/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.5/jakarta.mail-2.0.5.jar!/META-INF/jakarta.address.map
+DEBUG: successfully loaded resource: jar:file:/C:/Users/SIVASURIYA%20S/.m2/repository/org/eclipse/angus/jakarta.mail/2.0.5/jakarta.mail-2.0.5.jar!/META-INF/jakarta.address.map
+DEBUG: getProvider() returning jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle]
+DEBUG SMTP: useEhlo true, useAuth true
+DEBUG SMTP: trying to connect to host "smtp-relay.brevo.com", port 587, isSSL false
+220 smtp-relay.brevo.com ESMTP Service Ready
+DEBUG SMTP: connected to host "smtp-relay.brevo.com", port: 587
+EHLO LAPTOP-5L586I7A
+250-Hello LAPTOP-5L586I7A
+250-PIPELINING
+250-8BITMIME
+250-ENHANCEDSTATUSCODES
+250-CHUNKING
+250-STARTTLS
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 SIZE 20971520
+DEBUG SMTP: Found extension "PIPELINING", arg ""
+DEBUG SMTP: Found extension "8BITMIME", arg ""
+DEBUG SMTP: Found extension "ENHANCEDSTATUSCODES", arg ""
+DEBUG SMTP: Found extension "CHUNKING", arg ""
+DEBUG SMTP: Found extension "STARTTLS", arg ""
+DEBUG SMTP: Found extension "AUTH", arg "PLAIN LOGIN CRAM-MD5"
+DEBUG SMTP: Found extension "SIZE", arg "20971520"
+STARTTLS
+220 2.0.0 Ready to start TLS
+EHLO LAPTOP-5L586I7A
+250-Hello LAPTOP-5L586I7A
+250-PIPELINING
+250-8BITMIME
+250-ENHANCEDSTATUSCODES
+250-CHUNKING
+250-AUTH LOGIN CRAM-MD5 PLAIN
+250 SIZE 20971520
+DEBUG SMTP: Found extension "PIPELINING", arg ""
+DEBUG SMTP: Found extension "8BITMIME", arg ""
+DEBUG SMTP: Found extension "ENHANCEDSTATUSCODES", arg ""
+DEBUG SMTP: Found extension "CHUNKING", arg ""
+DEBUG SMTP: Found extension "AUTH", arg "LOGIN CRAM-MD5 PLAIN"
+DEBUG SMTP: Found extension "SIZE", arg "20971520"
+DEBUG SMTP: protocolConnect login, host=smtp-relay.brevo.com, user=sivasuriya6080@gmail.com, password=<non-null>
+DEBUG SMTP: Attempt to authenticate using mechanisms: LOGIN PLAIN DIGEST-MD5 NTLM XOAUTH2 
+DEBUG SMTP: Using mechanism LOGIN
+DEBUG SMTP: AUTH LOGIN command trace suppressed
+DEBUG SMTP: AUTH LOGIN failed
+2026-03-09T18:54:49.483+05:30 ERROR 20288 --- [gira-backend] [nio-8080-exec-1] com.gira.backend.service.EmailService    : Failed to send OTP email to test@example.com: Authentication failed. FALLING BACK TO MOCK (OTP: 087168)
+>>> MOCK EMAIL SENT TO test@example.com. OTP CODE IS: [087168]
+2026-03-09T18:54:49.485+05:30  INFO 20288 --- [gira-backend] [nio-8080-exec-1] c.g.backend.controller.AuthController    : OTP dispatched for test@example.com
+2026-03-09T18:57:47.031+05:30 DEBUG 20288 --- [gira-backend] [nio-8080-exec-3] c.g.backend.controller.AuthController    : Checking session for userId: null
+2026-03-09T18:57:47.054+05:30 DEBUG 20288 --- [gira-backend] [nio-8080-exec-3] c.g.backend.controller.AuthController    : Checking session for userId: null
+DEBUG: getProvider() returning jakarta.mail.Provider[TRANSPORT,smtp,org.eclipse.angus.mail.smtp.SMTPTransport,Oracle]
+DEBUG SMTP: useEhlo true, useAuth true
+DEBUG SMTP: trying to connect to host "smtp-relay.brevo.com", port 587, isSSL false
+220 smtp-relay.brevo.com ESMTP Service Ready
+DEBUG SMTP: connected to host "smtp-relay.brevo.com", port: 587
+EHLO LAPTOP-5L586I7A
+250-Hello LAPTOP-5L586I7A
+250-PIPELINING
+250-8BITMIME
+250-ENHANCEDSTATUSCODES
+250-CHUNKING
+250-STARTTLS
+250-AUTH CRAM-MD5 PLAIN LOGIN
+250 SIZE 20971520
+DEBUG SMTP: Found extension "PIPELINING", arg ""
+DEBUG SMTP: Found extension "8BITMIME", arg ""
+DEBUG SMTP: Found extension "ENHANCEDSTATUSCODES", arg ""
+DEBUG SMTP: Found extension "CHUNKING", arg ""
+DEBUG SMTP: Found extension "STARTTLS", arg ""
+DEBUG SMTP: Found extension "AUTH", arg "CRAM-MD5 PLAIN LOGIN"
+DEBUG SMTP: Found extension "SIZE", arg "20971520"
+STARTTLS
+220 2.0.0 Ready to start TLS
+EHLO LAPTOP-5L586I7A
+250-Hello LAPTOP-5L586I7A
+250-PIPELINING
+250-8BITMIME
+250-ENHANCEDSTATUSCODES
+250-CHUNKING
+250-AUTH PLAIN LOGIN CRAM-MD5
+250 SIZE 20971520
+DEBUG SMTP: Found extension "PIPELINING", arg ""
+DEBUG SMTP: Found extension "8BITMIME", arg ""
+DEBUG SMTP: Found extension "ENHANCEDSTATUSCODES", arg ""
+DEBUG SMTP: Found extension "CHUNKING", arg ""
+DEBUG SMTP: Found extension "AUTH", arg "PLAIN LOGIN CRAM-MD5"
+DEBUG SMTP: Found extension "SIZE", arg "20971520"
+DEBUG SMTP: protocolConnect login, host=smtp-relay.brevo.com, user=sivasuriya6080@gmail.com, password=<non-null>
+DEBUG SMTP: Attempt to authenticate using mechanisms: LOGIN PLAIN DIGEST-MD5 NTLM XOAUTH2 
+DEBUG SMTP: Using mechanism LOGIN
+DEBUG SMTP: AUTH LOGIN command trace suppressed
+DEBUG SMTP: AUTH LOGIN failed
+2026-03-09T18:57:55.039+05:30 ERROR 20288 --- [gira-backend] [nio-8080-exec-5] com.gira.backend.service.EmailService    : Failed to send OTP email to suriyaskr2005@gmail.com: Authentication failed. FALLING BACK TO MOCK (OTP: 234946)
+>>> MOCK EMAIL SENT TO suriyaskr2005@gmail.com. OTP CODE IS: [234946]
+2026-03-09T18:57:55.039+05:30  INFO 20288 --- [gira-backend] [nio-8080-exec-5] c.g.backend.controller.AuthController    : OTP dispatched for suriyaskr2005@gmail.com
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  06:01 min
+[INFO] Finished at: 2026-03-09T19:00:18+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.5.11:run (default-cli) on project backend: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

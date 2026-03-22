@@ -16,7 +16,8 @@ const PLAYOFFS_DATA = [
             gradient: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
             accentColor: "#FFCE32",
             icon: "🎯",
-            author: "GIRA System",
+            author: "gira System",
+
             role: "Manager",
             likes: 48,
             views: "5.2k",
@@ -346,7 +347,8 @@ const PlayoffsPage = () => {
             {/* ── Sticky Navbar ── */}
             <nav className={`playoffs-nav ${scrolled ? "nav-scrolled" : ""}`}>
                 <div className="nav-brand" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-                    <span className="nav-logo-text">gira</span>
+                    <span className="nav-logo-text logo-font">gira</span>
+
                 </div>
 
                 <div className="nav-search-wrap">
@@ -438,9 +440,11 @@ const PlayoffsPage = () => {
                 {/* ── Footer ── */}
                 <footer className="playoffs-footer">
                     <div className="footer-brand">
-                        <span>gira</span>
+                        <span className="logo-font">gira</span>
+
                     </div>
-                    <p className="footer-text">© 2026 GIRA · Service Management Platform</p>
+                    <p className="footer-text">© 2026 <span className="logo-font">gira</span> · Service Management Platform</p>
+
                     <div className="footer-links">
                         <a href="#">About</a>
                         <a href="#">Privacy</a>

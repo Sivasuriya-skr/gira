@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "var(--primary-900)",
+          background: "#081131",
           gap: "0.75rem",
           color: "var(--text-muted)",
           fontFamily: "var(--font-body)",

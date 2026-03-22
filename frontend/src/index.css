@@ -1,12 +1,11 @@
-﻿/* ============================================================
+/* ============================================================
    GIRA â€” DESIGN SYSTEM
    Palette: Charcoal Dark + Emerald Accent
    Fonts: Space Grotesk (headings) + Inter (body)
    Tone: Premium Â· Minimal Â· Cutting-Edge
    ============================================================ */
 
-@import url("https://api.fontshare.com/v2/css?f[]=clash-display@700&f[]=cabinet-grotesk@500&f[]=satoshi@400&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+/* Fonts are preloaded in index.html to prevent FOUC */
 
 /* ---- CSS Custom Properties ---- */
 :root {
@@ -54,6 +53,8 @@
   --font-sub: "Cabinet Grotesk", sans-serif;
   --font-body: "Satoshi", sans-serif;
   --font-mono: "Space Mono", monospace;
+  --font-logo: "butterpop", cursive;
+
 
   /* — Shadows — */
   --shadow-sm: 0 4px 12px rgba(13, 40, 92, 0.12);
@@ -159,6 +160,14 @@ p {
   line-height: 1.7;
   letter-spacing: 0;
 }
+
+.logo-font {
+  font-family: var(--font-logo) !important;
+  text-transform: lowercase;
+  letter-spacing: 0.03em;
+}
+
+
 
 /* ============================================================
    Buttons â€” Global

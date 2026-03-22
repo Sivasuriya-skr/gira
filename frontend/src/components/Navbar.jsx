@@ -49,8 +49,9 @@ const Navbar = () => {
             gap: "10px",
           }}
         >
-          <span className="navbar-wordmark">gira</span>
+          <span className="navbar-wordmark logo-font">gira</span>
         </a>
+
 
         <button
           className="navbar-toggler"

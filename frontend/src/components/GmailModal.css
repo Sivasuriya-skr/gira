@@ -1,0 +1,166 @@
+.gmail-overlay {
+  position: fixed;
+  bottom: 0;
+  right: 50px;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.gmail-window {
+  width: 550px;
+  height: 600px;
+  background: white;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+.gmail-header {
+  background: #404040;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.gmail-header-actions button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.gmail-fields {
+  padding: 0 15px;
+}
+
+.gmail-field {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.field-label {
+  color: #777;
+  min-width: 40px;
+}
+
+.field-value {
+  color: #333;
+}
+
+.gmail-select {
+  border: 1px solid transparent;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  outline: none;
+  background: #f8f9fa;
+  cursor: pointer;
+}
+
+.gmail-select:hover {
+  border-color: #ddd;
+}
+
+.recipient-preview {
+  font-size: 0.75rem;
+  color: #1a73e8;
+}
+
+.gmail-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  padding: 5px 0;
+}
+
+.gmail-composer {
+  flex: 1;
+  padding: 15px;
+}
+
+.gmail-textarea {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.gmail-footer {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.gmail-send-btn {
+  background: #0b57d0;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gmail-send-btn:hover {
+  background: #0842a0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.gmail-send-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.gmail-footer-tools {
+  display: flex;
+  gap: 12px;
+  color: #444;
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.gmail-footer-tools span {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.gmail-footer-tools span:hover {
+  background: #f0f0f0;
+}
+
+.gmail-trash-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.gmail-trash-btn:hover {
+  background: #f0f0f0;
+}

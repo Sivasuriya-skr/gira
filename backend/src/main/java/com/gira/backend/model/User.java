@@ -20,6 +20,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "company_id")
+    private String companyId;
+
+    @Column(name = "company_name")
+    private String companyName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -38,7 +44,8 @@ public class User {
     }
 
     // ── Constructors ─────────────────────────────────────────────
-    public User() {}
+    public User() {
+    }
 
     public User(String name, String email, String password, Role role) {
         this.name = name;
@@ -47,21 +54,70 @@ public class User {
         this.role = role;
     }
 
+    public User(String name, String email, String password, Role role, String companyId, String companyName) {
+        this(name, email, password, role);
+        this.companyId = companyId;
+        this.companyName = companyName;
+    }
+
     // ── Getters & Setters ────────────────────────────────────────
-    public Long getId()                        { return id; }
-    public void setId(Long id)                 { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getName()                    { return name; }
-    public void setName(String name)           { this.name = name; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail()                   { return email; }
-    public void setEmail(String email)         { this.email = email; }
+    public String getName() {
+        return name;
+    }
 
-    public String getPassword()                { return password; }
-    public void setPassword(String password)   { this.password = password; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Role getRole()                      { return role; }
-    public void setRole(Role role)             { this.role = role; }
+    public String getEmail() {
+        return email;
+    }
 
-    public LocalDateTime getCreatedAt()        { return createdAt; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }

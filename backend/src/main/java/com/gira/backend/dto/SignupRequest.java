@@ -9,6 +9,8 @@ public class SignupRequest {
     private String email;
     private String password;
     private String role;          // "worker" | "provider" | "manager"
+    private String companyId;     // optional: required for worker/provider joins
+    private String companyName;   // optional: stored alongside companyId
 
     public SignupRequest() {}
 
@@ -23,4 +25,10 @@ public class SignupRequest {
 
     public String getRole()                    { return role; }
     public void setRole(String role)           { this.role = role; }
+
+    public String getCompanyId()               { return companyId; }
+    public void setCompanyId(String companyId) { this.companyId = companyId; }
+
+    public String getCompanyName()                 { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 }

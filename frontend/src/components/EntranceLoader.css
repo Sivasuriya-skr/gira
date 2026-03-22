@@ -1,0 +1,91 @@
+.entrance-root {
+    position: fixed;
+    inset: 0;
+    background: #060b1d; /* Deep navy */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.entrance-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+}
+
+.loader-logo {
+    position: relative;
+    font-size: 4rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation: entranceFadeIn 0.8s ease-out both;
+}
+
+.logo-dot {
+    width: 12px;
+    height: 12px;
+    background: #ffce32; /* Gira Yellow */
+    border-radius: 50%;
+    margin-top: 1.5rem;
+    box-shadow: 0 0 20px rgba(255, 206, 50, 0.4);
+    animation: dotPulse 2s infinite ease-in-out;
+}
+
+.loader-orbit {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
+.orbit-circle {
+    position: absolute;
+    inset: 0;
+    border: 3px solid rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+}
+
+.orbit-glind {
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent;
+    border-top-color: #ffce32;
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.loader-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+    animation: textFlicker 2s infinite ease-in-out;
+}
+
+@keyframes entranceFadeIn {
+    from { opacity: 0; transform: scale(0.9); filter: blur(10px); }
+    to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+@keyframes dotPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.7; box-shadow: 0 0 40px rgba(255, 206, 50, 0.6); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes textFlicker {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; color: #ffce32; }
+}

@@ -39,6 +39,7 @@ public class Ticket {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+    private LocalDateTime expectedResolutionDate;
 
     @PrePersist
     protected void onCreate() {
@@ -87,4 +88,7 @@ public class Ticket {
 
     public LocalDateTime getCreatedAt()            { return createdAt; }
     public LocalDateTime getUpdatedAt()            { return updatedAt; }
+
+    public LocalDateTime getExpectedResolutionDate() { return expectedResolutionDate; }
+    public void setExpectedResolutionDate(LocalDateTime expectedResolutionDate) { this.expectedResolutionDate = expectedResolutionDate; }
 }

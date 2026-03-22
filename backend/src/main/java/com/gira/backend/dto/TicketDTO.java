@@ -17,6 +17,7 @@ public class TicketDTO {
     private UserDTO provider;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime expectedResolutionDate;
 
     public TicketDTO() {}
 
@@ -50,4 +51,7 @@ public class TicketDTO {
 
     public LocalDateTime getUpdatedAt()            { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public LocalDateTime getExpectedResolutionDate() { return expectedResolutionDate; }
+    public void setExpectedResolutionDate(LocalDateTime expectedResolutionDate) { this.expectedResolutionDate = expectedResolutionDate; }
 }

@@ -9,14 +9,18 @@ public class UserDTO {
     private String name;
     private String email;
     private String role;          // lowercase: "worker" | "provider" | "manager"
+    private String companyId;     // nullable: required for worker/provider
+    private String companyName;   // nullable: human-friendly label
 
     public UserDTO() {}
 
-    public UserDTO(Long id, String name, String email, String role) {
+    public UserDTO(Long id, String name, String email, String role, String companyId, String companyName) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.companyId = companyId;
+        this.companyName = companyName;
     }
 
     public Long getId()                        { return id; }
@@ -30,4 +34,10 @@ public class UserDTO {
 
     public String getRole()                    { return role; }
     public void setRole(String role)           { this.role = role; }
+
+    public String getCompanyId()               { return companyId; }
+    public void setCompanyId(String companyId) { this.companyId = companyId; }
+
+    public String getCompanyName()                 { return companyName; }
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
 }

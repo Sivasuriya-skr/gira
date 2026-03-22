@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./AuthPage.css";
@@ -12,6 +12,16 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // ── Read ?error= query param set by the OAuth failure redirect ──
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "account_not_found") {
+      setError("Account not found. Please sign up first.");
+      // Clean the URL so refreshing doesn't re-show the banner
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -38,6 +48,11 @@ const LoginPage = () => {
     }
   };
 
+  // ── Google OAuth: must be a full page redirect, not fetch/axios ──
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
+
   return (
     <div className="auth-root">
       <div className="auth-noise" />
@@ -50,8 +65,9 @@ const LoginPage = () => {
 
       <nav className="auth-nav">
         <div className="auth-nav-left">
-          <span>gira</span>
+          <span className="logo-font">gira</span>
           <span className="auth-logo-dot" />
+
         </div>
         <div className="auth-nav-center">
           <Link className="auth-nav-link" to="/playoffs">Product</Link>
@@ -68,9 +84,10 @@ const LoginPage = () => {
         <div className="auth-left">
           <div className="auth-form-wrap">
             <Link to="/" className="auth-logo" aria-label="gira home">
-              <span>gira</span>
+              <span className="logo-font">gira</span>
               <span className="auth-logo-dot" />
             </Link>
+
             <h1 className="auth-title">Welcome back</h1>
             <p className="auth-subtitle">
               Sign in to orchestrate tickets, providers, and SLAs from one command center.
@@ -79,12 +96,14 @@ const LoginPage = () => {
             {error && <div className="auth-error">{error}</div>}
 
             <form className="auth-animate" onSubmit={handleLogin}>
+              <label className="auth-label" htmlFor="login-email">Email</label>
               <div className="auth-field">
                 <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2">
                   <rect x="2" y="4" width="20" height="16" rx="2" />
                   <path d="M2 6l10 7 10-7" />
                 </svg>
                 <input
+                  id="login-email"
                   type="email"
                   className="auth-input"
                   placeholder="work@email.com"
@@ -94,12 +113,14 @@ const LoginPage = () => {
                 />
               </div>
 
+              <label className="auth-label" htmlFor="login-password">Password</label>
               <div className="auth-field">
                 <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="2">
                   <rect x="3" y="11" width="18" height="11" rx="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
                 <input
+                  id="login-password"
                   type={showPassword ? "text" : "password"}
                   className="auth-input"
                   placeholder="Password"
@@ -143,10 +164,19 @@ const LoginPage = () => {
               </div>
 
               <button type="submit" className="auth-btn auth-primary" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? (
+                  <>
+                    <div className="loading-spinner" style={{ width: '16px', height: '16px', borderTopColor: '#fff' }} />
+                    Signing in...
+                  </>
+                ) : "Sign In"}
               </button>
 
-              <button type="button" className="auth-btn auth-google" onClick={() => { }}>
+              <button
+                type="button"
+                className="auth-btn auth-google"
+                onClick={handleGoogleLogin}
+              >
                 <img
                   src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
                   alt="Google"

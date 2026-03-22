@@ -1,17 +1,20 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import EntranceLoader from "./components/EntranceLoader";
 
 // Pages
 import WelcomePage from "./pages/WelcomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import WorkerDashboard from "./pages/WorkerDashboard";
 import ProviderDashboard from "./pages/ProviderDashboard";
 import ManagerDashboard from "./pages/ManagerDashboard";
@@ -28,13 +31,21 @@ function App() {
   );
 }
 
-function AppRoutes() {
+const AppRoutes = memo(function AppRoutes() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <EntranceLoader />;
+  }
+
   return (
     <>
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Protected Routes */}
         <Route
@@ -70,6 +81,6 @@ function AppRoutes() {
       </Routes>
     </>
   );
-}
+});
 
 export default App;

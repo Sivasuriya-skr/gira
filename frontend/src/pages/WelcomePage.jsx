@@ -204,14 +204,11 @@ function Navbar() {
 }
 
 /* ─────────────────────────────────────────────
-   HERO
+   HERO - FIX: Wrap in document scroll, not element scroll
    ───────────────────────────────────────────── */
 function HeroSection() {
-  const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  // KEY FIX: Use window scroll instead of element scroll
+  const { scrollYProgress } = useScroll();
 
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 120,
@@ -219,20 +216,20 @@ function HeroSection() {
     mass: 0.6,
   });
 
-  const card1Y = useTransform(smoothProgress, [0, 0.33], [0, -140]);
-  const card1Opacity = useTransform(smoothProgress, [0, 0.33], [1, 0]);
-  const card1Rotate = useTransform(smoothProgress, [0, 0.33], [0, -1]);
+  const card1Y = useTransform(smoothProgress, [0, 0.15], [0, -140]);
+  const card1Opacity = useTransform(smoothProgress, [0, 0.15], [1, 0]);
+  const card1Rotate = useTransform(smoothProgress, [0, 0.15], [0, -1]);
 
-  const card2Y = useTransform(smoothProgress, [0.16, 0.45], [140, 0]);
-  const card2Opacity = useTransform(smoothProgress, [0.18, 0.42], [0, 1]);
-  const card2Scale = useTransform(smoothProgress, [0.18, 0.42], [0.95, 1]);
+  const card2Y = useTransform(smoothProgress, [0.05, 0.25], [140, 0]);
+  const card2Opacity = useTransform(smoothProgress, [0.08, 0.22], [0, 1]);
+  const card2Scale = useTransform(smoothProgress, [0.08, 0.22], [0.95, 1]);
 
-  const card3Y = useTransform(smoothProgress, [0.48, 0.75], [200, 0]);
-  const card3Opacity = useTransform(smoothProgress, [0.5, 0.72], [0, 1]);
-  const card3Scale = useTransform(smoothProgress, [0.5, 0.72], [0.94, 1]);
+  const card3Y = useTransform(smoothProgress, [0.15, 0.35], [200, 0]);
+  const card3Opacity = useTransform(smoothProgress, [0.18, 0.32], [0, 1]);
+  const card3Scale = useTransform(smoothProgress, [0.18, 0.32], [0.94, 1]);
 
   return (
-    <section className="hero-section" id="hero" ref={sectionRef}>
+    <section className="hero-section" id="hero">
       <div className="hero-gradient" />
       <div className="hero-noise" />
 
@@ -776,6 +773,12 @@ function FooterCTA() {
 export default function WelcomePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, []);
+
+  // Ensure body scrolling is enabled when arriving on the landing page
+  useEffect(() => {
+    document.body.style.overflow = "auto";
+    return () => { document.body.style.overflow = ""; };
   }, []);
 
   return (
